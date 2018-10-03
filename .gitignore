@@ -47,7 +47,9 @@ dist
 dll
 main.js
 main.js.map
-arc-design*
 
 .idea
 npm-debug.log.*
+
+# Arc design tar ball
+arc-design*
