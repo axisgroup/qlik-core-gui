@@ -1,3 +1,4 @@
+// @flow
 import { createStore, applyMiddleware, compose } from 'redux';
 import thunk from 'redux-thunk';
 import { createHashHistory } from 'history';
@@ -5,11 +6,12 @@ import { routerMiddleware, routerActions } from 'react-router-redux';
 import { createLogger } from 'redux-logger';
 import rootReducer from '../reducers';
 import * as counterActions from '../actions/counter';
-import type { counterStateType } from '../reducers/types';
+import * as configActions from '../actions/config';
+import type { appState } from '../reducers/types';
 
 const history = createHashHistory();
 
-const configureStore = (initialState?: counterStateType) => {
+const configureStore = (initialState?: appState) => {
   // Redux Configuration
   const middleware = [];
   const enhancers = [];
@@ -35,6 +37,7 @@ const configureStore = (initialState?: counterStateType) => {
   // Redux DevTools Configuration
   const actionCreators = {
     ...counterActions,
+    ...configActions,
     ...routerActions
   };
   // If Redux DevTools Extension is installed use it, otherwise use Redux compose

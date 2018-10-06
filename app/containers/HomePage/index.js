@@ -3,6 +3,8 @@ import React, { Component } from 'react';
 import GenericObjectView from '../../components/genericObjView';
 import Layout from 'arc-design/components/layout';
 import NavBar from '../../components/navbar';
+import ConfigInputPage from '../configInputPage';
+
 
 import './homepage.css';
 
@@ -18,6 +20,7 @@ export default class HomePage extends Component<Props> {
             <NavBar />
           </Layout.PrimaryHeader>
           <Layout.Sidebar> </Layout.Sidebar>
+          <ConfigInputPage/>
         </Layout>
       </div>
     );
