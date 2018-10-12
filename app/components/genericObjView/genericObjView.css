@@ -1,3 +1,16 @@
 .genericObjView {
   height: 100%;
+  width: 100%;
+}
+
+.genericObjView > .genericObjTable {
+  width: 40%;
+  display: inline-block;
+  vertical-align: top;
+}
+
+.genericObjView > .genericObjDetail {
+  width: 60%;
+  display: inline-block;
+  vertical-align: top;
 }

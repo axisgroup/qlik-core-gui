@@ -5,16 +5,15 @@ export const REMOVE_CONFIG = 'REMOVE_CONFIG';
 import type { Config } from '../reducers/types';
 
 export function setConfig(config: Config) {
-  console.log(config);
   return {
     type: SET_CONFIG,
-    config
+    payload: config
   };
 }
 
 export function removeConfig() {
   return {
     type: REMOVE_CONFIG,
-    config: {}
+    payload: {}
   };
 }

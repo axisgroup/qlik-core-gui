@@ -1,5 +1,4 @@
 // @flow
-import { INCREMENT_COUNTER, DECREMENT_COUNTER } from '../actions/counter';
 import { SET_CONFIG, REMOVE_CONFIG } from '../actions/config';
 import type { Action, Config } from './types';
 

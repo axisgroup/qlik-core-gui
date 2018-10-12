@@ -4,7 +4,7 @@ import type { Dispatch as ReduxDispatch, Store as ReduxStore } from 'redux';
 
 export type appState = {
   +config: Config,
-  +counter: number
+  +genericTable: genericTableState
 }
 
 export type Config = {
@@ -13,9 +13,11 @@ export type Config = {
   +appname?: string
 }
 
-export type counterStateType = {
-  +counter: number
-};
+export type genericTableState = {
+  expandedRows: string[],
+  selectedObj: string,
+  expandAll?: boolean
+}
 
 export type Action = {
   type: string,

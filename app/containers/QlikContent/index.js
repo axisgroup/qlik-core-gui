@@ -1,21 +1,20 @@
 // @flow
 import React, { Component } from 'react';
-import GenericObjectView from '../../components/genericObjView';
 import Layout from 'arc-design/components/layout';
-import NavBar from '../../components/navbar';
-import ConfigInput from '../../components/configInput';
-import QlikContent from '../QlikContent';
-
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
+import connectQlik from 'react-qae';
+import { switchMap, map } from 'rxjs/operators';
+import { GetAllInfos } from 'rxq/Doc';
+
+import GenericObjectView from '../../components/genericObjView';
 import * as ConfigActions from '../../actions/config';
 import type { Config } from '../../reducers/types';
 
-import './homepage.css';
+import './qlikcontent.css';
 
 type Props = {
   config: Config,
-  setConfig: (config: Config) => void,
   removeConfig: () => void
 };
 
@@ -29,39 +28,36 @@ function mapDispatchToProps(dispatch) {
   return bindActionCreators(ConfigActions, dispatch);
 }
 
-const HomePage = (props: Props) => {
-  const { setConfig, removeConfig/*, config*/ } = props;
-  
+const QlikContent = (props: Props) => {
+  const { removeConfig /*, config*/ } = props;
   /*** DELETE THIS LATER ***/
   const config = {
     host: 'localhost',
     port: 9076,
     appname: 'drugcases.qvf'
   };
-  /*** DELETE THIS LATER ***/
-  let content;
+  /*** END DELETE THIS ***/
+  let QaeContext;
   if (config.host && config.appname && config.port) {
-    content = <QlikContent />
-  } else {
-    content = <ConfigInput onSubmit={setConfig} />;
-  }
+    QaeContext = connectQlik(config);
+    const genericObjList$ = QaeContext.QaeService.doc$.pipe(
+      switchMap(docH => docH.ask(GetAllInfos))
+    );
+    // QaeContext.QaeService.session.notifications$.subscribe(console.log)
     return (
-      <div className="homeView">
-        <Layout>
-          <Layout.PrimaryHeader>
-            <NavBar />
-          </Layout.PrimaryHeader>
-          <Layout.Sidebar> </Layout.Sidebar>
-          {content}
-        </Layout>
+      <div className="main-qlik">
+        <QaeContext.QaeProvider value={QaeContext.QaeService}>
+          <GenericObjectView doc$={QaeContext.QaeService.doc$}/>
+        </QaeContext.QaeProvider>
       </div>
     );
+  } else {
+    return null;
+  }
 };
-
-// export default HomePage;
 
 // $FlowFixMe
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(HomePage);
+)(QlikContent);

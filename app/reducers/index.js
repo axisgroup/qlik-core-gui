@@ -1,12 +1,12 @@
 // @flow
 import { combineReducers } from 'redux';
 import { routerReducer as router } from 'react-router-redux';
-import counter from './counter';
 import config from './config';
+import genericTable from './genericTable';
 
 const rootReducer = combineReducers({
-  counter,
   config,
+  genericTable,
   router
 });
 

@@ -1,0 +1,43 @@
+.genericObjTable {
+  height: 100%;
+  width: 100%;
+}
+
+.genericObjTable > .header-row {
+  width: 100%;
+}
+
+.genericObjTable > .header-row .header-row-cell {
+  border: 1px solid darkgray;
+  border-collapse: collapse;
+  height: 2em;
+}
+
+.genericObjTable > .body {
+  width: 100%;
+  height: calc(100% - 2em);
+}
+
+.genericObjTable > .body .body-row {
+  width: 100%;
+}
+
+.genericObjTable > .body .body-row .body-row-cell {
+  overflow-wrap: break-word;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  height: 2em;
+  border-collapse: collapse;
+  border: 1px solid lightgray;
+  cursor: pointer;
+}
+
+.genericObjTable > .body .body-row.second-level .body-row-cell {
+  overflow-wrap: break-word;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  height: 2em;
+  border-collapse: collapse;
+  border: 1px solid lightgray;
+  background-color: mediumaquamarine;
+}
