@@ -1,8 +1,8 @@
 // @flow
+import type { Config } from '../reducers/types';
+
 export const SET_CONFIG = 'SET_CONFIG';
 export const REMOVE_CONFIG = 'REMOVE_CONFIG';
-
-import type { Config } from '../reducers/types';
 
 export function setConfig(config: Config) {
   return {

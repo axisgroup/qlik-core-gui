@@ -27,29 +27,42 @@ const ConfigInput = (props: Props) => {
   let port: number;
   let appname: string;
   return (
-    <form
-      onSubmit={() => onSubmit({ host, port, appname})}
-    >
-      <label>Host:</label>
-      <input
-        value={host}
-        type="text"
-        onChange={event => (host = event.target.value)}
-      />
+    <form onSubmit={() => onSubmit({ host, port, appname })}>
+      <label htmlFor="host">
+        Host:
+        <input
+          id="host"
+          value={host}
+          type="text"
+          onChange={event => {
+            host = event.target.value;
+          }}
+        />
+      </label>
       <div className="spacer" />
-      <label>Port:</label>
-      <input
-        value={port}
-        type="number"
-        onChange={event => (port = parseInt(event.target.value))}
-      />
+      <label htmlFor="port">
+        Port:
+        <input
+          id="port"
+          value={port}
+          type="number"
+          onChange={event => {
+            port = parseInt(event.target.value, 10);
+          }}
+        />
+      </label>
       <div className="spacer" />
-      <label>App Name:</label>
-      <input
-        value={appname}
-        type="text"
-        onChange={event => (appname = event.target.value)}
-      />
+      <label htmlFor="appname">
+        App Name:
+        <input
+          id="appname"
+          value={appname}
+          type="text"
+          onChange={event => {
+            appname = event.target.value;
+          }}
+        />
+      </label>
       <div className="spacer" />
       <input type="submit" value="Connect" />
     </form>

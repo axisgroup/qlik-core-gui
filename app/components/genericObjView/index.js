@@ -2,15 +2,9 @@
 import React from 'react';
 import { withHandlers, compose } from 'recompose';
 import { connect } from 'react-redux';
-import { componentFromStream } from '../../../app/utils/observable-config';
-import distinctProp from '../../../app/utils/distinctProp';
-import GenericObjectTable from '../genericObjTable';
-import GenericObjectDetail from '../genericObjDetail';
 import {
   switchMap,
   map,
-  tap,
-  mergeMap,
   startWith,
   switchAll,
   shareReplay,
@@ -18,11 +12,9 @@ import {
   take,
   withLatestFrom,
   combineLatest,
-  filter,
-  partition,
-  debounceTime
+  partition
 } from 'rxjs/Operators';
-import { empty, merge } from 'rxjs';
+import { merge } from 'rxjs';
 import {
   GetAllInfos,
   CreateSessionObject,
@@ -34,8 +26,12 @@ import {
   toggleRow,
   selectObj,
   toggleExpandAll
-} from '../../../app/actions/genericTable';
+} from '../../actions/genericTable';
 
+import { componentFromStream } from '../../utils/observable-config';
+import distinctProp from '../../utils/distinctProp';
+import GenericObjectTable from '../genericObjTable';
+import GenericObjectDetail from '../genericObjDetail';
 import './genericObjView.css';
 
 // the sheet objects list from qlik needs a property tree
@@ -62,7 +58,7 @@ const headerKeys = [
   { key: 'id', title: 'qId' }
 ];
 
-/** State Management **/
+// State Management
 const mapStateToProps = state => ({
   genericTable: state.genericTable
 });
@@ -78,7 +74,7 @@ const tableHandlers = withHandlers({
     dispatch(toggleExpandAll());
   }
 });
-/** END State Management **/
+// END State Management
 
 // The main function
 const GenericObjectView = props$ => {
@@ -97,19 +93,19 @@ const GenericObjectView = props$ => {
 
   // Get the state and the handlers
   const state$ = props$.pipe(
-    map(props => ({
-      genericTable: props.genericTable,
-      dispatchToggleRow: props.dispatchToggleRow,
-      dispatchSelectObj: props.dispatchSelectObj,
-      dispatchToggleExpandAll: props.dispatchToggleExpandAll
-    })),
+    // map(props => ({
+    //   genericTable: props.genericTable,
+    //   dispatchToggleRow: props.dispatchToggleRow,
+    //   dispatchSelectObj: props.dispatchSelectObj,
+    //   dispatchToggleExpandAll: props.dispatchToggleExpandAll
+    // })),
     shareReplay(1)
   );
 
   // Partition based on qId state
   const [withQID$, noQID$] = doc$.pipe(
     combineLatest(qId$),
-    partition(([docH, qId]) => qId.length > 0)
+    partition(([qId]) => qId.length > 0)
   );
 
   // Get object based on qId
@@ -120,16 +116,16 @@ const GenericObjectView = props$ => {
   );
 
   // Gets object properties and terminates if no qID
-  const selObjProps$ = merge(noQID$,
-    selObj$.pipe(
-    switchMap(objH => objH.ask(GetFullPropertyTree))
-  )
+  const selObjProps$ = merge(
+    noQID$,
+    selObj$.pipe(switchMap(objH => objH.ask(GetFullPropertyTree)))
   );
 
   // Gets object layout
-  const selObjLayout$ = merge(noQID$, 
+  const selObjLayout$ = merge(
+    noQID$,
     selObj$.pipe(switchMap(objH => objH.ask(GetLayout)))
-  );  
+  );
 
   // Creates a session object that will display all the types of objects in the app currently in a heirarchy form
   const AppList$ = doc$.pipe(
@@ -150,8 +146,8 @@ const GenericObjectView = props$ => {
   );
 
   // This will use the list of all the qTypes currently in the app to pull the object info
-  const getAllObjects = (objList: string[]) => {
-    return doc$.pipe(
+  const getAllObjects = (objList: string[]) =>
+    doc$.pipe(
       switchMap(docH =>
         docH.ask(GetObjects, {
           qTypes: objList,
@@ -162,7 +158,6 @@ const GenericObjectView = props$ => {
       ),
       take(1)
     );
-  };
 
   // Start with a generic object of app objects that invalidates => get all the types that exist => get all objects of those types
   // ==> match with the layout of the app objects to get the full heirarchy with all info
@@ -171,15 +166,13 @@ const GenericObjectView = props$ => {
     switchMapTo(getAllQTypes$),
     switchMap((objList: string[]) => getAllObjects(objList)),
     withLatestFrom(AppList$.pipe(switchMap(objH => objH.ask(GetLayout)))),
-    map(([objList, heirarchy]) => {
+    map(([objList, heirarchy]) =>
       // map the two data sources into a single heirarchial structure
       // the heirarchy needs to get the object title from object list
-      return heirarchy.qAppObjectList.qItems.map(sheet => {
+      heirarchy.qAppObjectList.qItems.map(sheet => {
         // match each child in the heirarchy to its twin in the object list, to get the object title
-        let children = sheet.qData.cells.map(child => {
-          const childInfo = objList.find(
-            (val, i, obj) => val.qInfo.qId === child.name
-          );
+        const children = sheet.qData.cells.map(child => {
+          const childInfo = objList.find(val => val.qInfo.qId === child.name);
           return {
             title: childInfo.qData.title,
             id: child.name,
@@ -191,10 +184,10 @@ const GenericObjectView = props$ => {
           title: sheet.qMeta.title,
           type: 'sheet',
           id: sheet.qInfo.qId,
-          children: children
+          children
         };
-      });
-    }),
+      })
+    ),
     combineLatest(state$, selObjProps$, selObjLayout$),
     map(([result, stateObj, objProps, objLayout]) => (
       <div className="genericObjView">

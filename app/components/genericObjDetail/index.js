@@ -1,21 +1,8 @@
 // @flow
 import React from 'react';
-import { componentFromStream } from '../../../app/utils/observable-config';
-import distinctProp from '../../../app/utils/distinctProp';
-import {
-  switchMap,
-  map,
-  tap,
-  mergeMap,
-  startWith,
-  switchAll,
-  shareReplay,
-  switchMapTo,
-  take,
-  combineLatest
-} from 'rxjs/Operators';
-import { GetAllInfos, CreateSessionObject, GetObjects } from 'rxq/Doc';
-import { GetLayout } from 'rxq/GenericObject';
+import { map, shareReplay, combineLatest } from 'rxjs/Operators';
+import { componentFromStream } from '../../utils/observable-config';
+import distinctProp from '../../utils/distinctProp';
 
 import './genericObjDetail.css';
 
@@ -40,13 +27,11 @@ const GenericObjectDetail = componentFromStream(props$ => {
 
   return objProps$.pipe(
     combineLatest(objLayout$),
-    map(([props,layout]) => {
-      console.log(props,layout);
+    map(([props, layout]) => {
+      console.log(props, layout);
       return (
-        <div className='container'>
-          <div className='properties'>
-            
-          </div>
+        <div className="container">
+          <div className="properties" />
         </div>
       );
     })
