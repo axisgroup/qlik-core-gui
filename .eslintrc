@@ -42,7 +42,7 @@
     "promise/always-return": "error",
     "promise/catch-or-return": "error",
     "promise/no-native": "off",
-    "react/jsx-boolean-value": ["always"],
+    "react/jsx-boolean-value": [1],
     "react/sort-comp": [
       "error",
       {

@@ -1,12 +1,19 @@
 // @flow
-import { createStore, applyMiddleware, compose } from 'redux';
+import {
+  createStore
+  // , applyMiddleware
+  // , compose
+} from 'redux';
 import thunk from 'redux-thunk';
 import { createHashHistory } from 'history';
-import { routerMiddleware, routerActions } from 'react-router-redux';
+import {
+  routerMiddleware
+  // , routerActions
+} from 'react-router-redux';
 import { createLogger } from 'redux-logger';
 import rootReducer from '../reducers';
-import * as configActions from '../actions/config';
-import * as genericTableActions from '../actions/genericTable';
+// import * as configActions from '../actions/config';
+// import * as genericTableActions from '../actions/genericTable';
 import type { appState } from '../reducers/types';
 
 const history = createHashHistory();
@@ -14,7 +21,7 @@ const history = createHashHistory();
 const configureStore = (initialState?: appState) => {
   // Redux Configuration
   const middleware = [];
-  const enhancers = [];
+  // const enhancers = [];
 
   // Thunk Middleware
   middleware.push(thunk);
@@ -35,27 +42,27 @@ const configureStore = (initialState?: appState) => {
   middleware.push(router);
 
   // Redux DevTools Configuration
-  const actionCreators = {
-    ...configActions,
-    ...genericTableActions,
-    ...routerActions
-  };
+  // const actionCreators = {
+  //   ...configActions,
+  //   ...genericTableActions,
+  //   ...routerActions
+  // };
   // If Redux DevTools Extension is installed use it, otherwise use Redux compose
   /* eslint-disable no-underscore-dangle */
-  const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__
-    ? window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__({
-        // Options: http://extension.remotedev.io/docs/API/Arguments.html
-        actionCreators
-      })
-    : compose;
+  // const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__
+  //   ? window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__({
+  //       // Options: http://extension.remotedev.io/docs/API/Arguments.html
+  //       actionCreators
+  //     })
+  //   : compose;
   /* eslint-enable no-underscore-dangle */
 
   // Apply Middleware & Compose Enhancers
-  enhancers.push(applyMiddleware(...middleware));
-  const enhancer = composeEnhancers(...enhancers);
+  // enhancers.push(applyMiddleware(...middleware));
+  // const enhancer = composeEnhancers(...enhancers);
 
   // Create Store
-  const store = createStore(rootReducer, initialState, enhancer);
+  const store = createStore(rootReducer, initialState);
 
   // if (module.hot) {
   //   module.hot.accept(
