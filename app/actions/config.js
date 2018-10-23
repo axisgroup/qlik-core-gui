@@ -7,7 +7,13 @@ export const REMOVE_CONFIG = 'REMOVE_CONFIG';
 export function setConfig(config: Config) {
   return {
     type: SET_CONFIG,
-    payload: config
+    payload: config.port
+      ? config
+      : {
+          host: config.host,
+          appname: config.appname,
+          isSecure: true
+        }
   };
 }
 
