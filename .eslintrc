@@ -32,7 +32,7 @@
     "flowtype/use-flow-type": "error",
     "flowtype/valid-syntax": "error",
     "generator-star-spacing": "off",
-    "import/no-unresolved": "error",
+    "import/no-unresolved": [2, { "caseSensitive": false }],
     "import/no-extraneous-dependencies": "off",
     "jsx-a11y/anchor-is-valid": "off",
     "no-console": "off",
