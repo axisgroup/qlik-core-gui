@@ -205,8 +205,9 @@ const GenericObjectView = props$ => {
             const foundChild = objParents.filter(
               obj => obj.parent.id === parent.children[i].qId
             );
-            /* eslint no-param-reassign: ["error", { "props": false }] */
+            /* eslint-disable no-param-reassign */
             parent.children[i] = foundChild[0];
+            /* eslint-enable no-param-reassign */
             findChildren(parent.children[i]);
           }
         }
