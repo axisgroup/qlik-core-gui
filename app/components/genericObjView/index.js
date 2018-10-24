@@ -215,7 +215,6 @@ const GenericObjectView = props$ => {
       for (let i = 0; i < lvl1Parents.length; i += 1) {
         findChildren(lvl1Parents[i]);
       }
-      console.log('lvl1parents', lvl1Parents);
       return lvl1Parents;
     }),
     combineLatest(state$, selObjProps$, selObjLayout$),
