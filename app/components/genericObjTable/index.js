@@ -1,22 +1,9 @@
 // @flow
 import React from 'react';
-import { componentFromStream } from '../../../app/utils/observable-config';
-import distinctProp from '../../../app/utils/distinctProp';
-import {
-  switchMap,
-  map,
-  tap,
-  mergeMap,
-  startWith,
-  switchAll,
-  shareReplay,
-  switchMapTo,
-  take,
-  combineLatest
-} from 'rxjs/Operators';
-import { GetAllInfos, CreateSessionObject, GetObjects } from 'rxq/Doc';
-import { GetLayout } from 'rxq/GenericObject';
+import { map, shareReplay, combineLatest } from 'rxjs/Operators';
 
+import { componentFromStream } from '../../utils/observable-config';
+import distinctProp from '../../utils/distinctProp';
 import './genericObjTable.css';
 
 const GenericObjectTable = componentFromStream(props$ => {
@@ -43,94 +30,162 @@ const GenericObjectTable = componentFromStream(props$ => {
     shareReplay(1)
   );
 
-  return data$.pipe(
-    combineLatest(headers$, state$),
-    map(([data, headers, state]) => {
-      console.log(data);
-      return (
-        <React.Fragment>
-          <button onClick={() => state.onToggleExpandAll()}>
-            {state.tableState.expandAll ? 'Collapse All' : 'Expand All'}
-          </button>
-          <table className="genericObjTable">
-            <thead>
-              <tr className="header-row">
-                <td>&nbsp;</td>
-                {headers.map((header, i) => (
-                  <td className="header-row-cell" key={i}>
-                    {header.title}
+  const toggleCell = (state, child, headers) =>
+    state.tableState.expandAll ||
+    state.tableState.expandedRows.includes(child.parent[headers[0].key]) ? (
+      <td className="body-row-cell toggle">
+        <div
+          onClick={() => state.onToggleRow(child.parent[headers[0].key])}
+          onKeyDown={() => state.onToggleRow(child.parent[headers[0].key])}
+          role="button"
+          tabIndex={0}
+        >
+          -
+        </div>
+      </td>
+    ) : (
+      <td className="body-row-cell toggle">
+        <div
+          onClick={() => state.onToggleRow(child.parent[headers[0].key])}
+          onKeyDown={() => state.onToggleRow(child.parent[headers[0].key])}
+          role="button"
+          tabIndex={0}
+        >
+          +
+        </div>
+      </td>
+    );
+
+  const rowChildren = (row, state, data, headers) => (
+    <React.Fragment>
+      {row.children.map((child, j) => {
+        if (
+          state.tableState.expandAll ||
+          state.tableState.expandedRows.includes(row.parent[headers[0].key])
+        ) {
+          return (
+            /* eslint-disable react/no-array-index-key */
+            <React.Fragment key={j}>
+              {/* eslint-enable react/no-array-index-key */}
+              <tr
+                className="body-row second-level"
+                /* eslint-disable react/no-array-index-key */
+                key={data.length + j}
+                /* eslint-enable react/no-array-index-key */
+              >
+                {child.children.length < 1 ? (
+                  <td>&nbsp;</td>
+                ) : (
+                  toggleCell(state, child, headers)
+                )}
+                {headers.map(header => (
+                  <td
+                    className="body-row-cell"
+                    /* eslint-disable react/no-array-index-key */
+                    key={child.parent[header.key]}
+                    /* eslint-enable react/no-array-index-key */
+                    title={child.parent[header.key]}
+                  >
+                    {child.parent[header.key]}
                   </td>
                 ))}
               </tr>
-            </thead>
-            <tbody className="body">
-              {data.map((row, i) => (
-                <React.Fragment key={i}>
-                  <tr className="body-row top-level" key={i}>
-                    {state.tableState.expandAll ||
-                    state.tableState.expandedRows.includes(
-                      row[headers[0].key]
-                    ) ? (
-                      <td
-                        className="body-row-cell toggle"
-                        onClick={() => state.onToggleRow(row[headers[0].key])}
+              {child.children.length < 1
+                ? null
+                : rowChildren(child, state, data, headers)}
+            </React.Fragment>
+          );
+        }
+        return null;
+      })}
+    </React.Fragment>
+  );
+
+  return data$.pipe(
+    combineLatest(headers$, state$),
+    map(([data, headers, state]) => (
+      <React.Fragment>
+        <button type="button" onClick={() => state.onToggleExpandAll()}>
+          {state.tableState.expandAll ? 'Collapse All' : 'Expand All'}
+        </button>
+        <table className="genericObjTable">
+          <thead>
+            <tr className="header-row">
+              <td>&nbsp;</td>
+              {headers.map(header => (
+                <td className="header-row-cell" key={header.title}>
+                  {header.title}
+                </td>
+              ))}
+            </tr>
+          </thead>
+          <tbody className="body">
+            {data.map(row => (
+              <React.Fragment key={row.parent[headers[0].key]}>
+                <tr
+                  className="body-row top-level"
+                  key={row.parent[headers[0].key]}
+                >
+                  {state.tableState.expandAll ||
+                  state.tableState.expandedRows.includes(
+                    row.parent[headers[0].key]
+                  ) ? (
+                    <td className="body-row-cell toggle">
+                      <div
+                        onClick={() =>
+                          state.onToggleRow(row.parent[headers[0].key])
+                        }
+                        onKeyDown={() =>
+                          state.onToggleRow(row.parent[headers[0].key])
+                        }
+                        role="button"
+                        tabIndex={0}
                       >
                         -
-                      </td>
-                    ) : (
-                      <td
-                        className="body-row-cell toggle"
-                        onClick={() => state.onToggleRow(row[headers[0].key])}
+                      </div>
+                    </td>
+                  ) : (
+                    <td className="body-row-cell toggle">
+                      <div
+                        onClick={() =>
+                          state.onToggleRow(row.parent[headers[0].key])
+                        }
+                        onKeyDown={() =>
+                          state.onToggleRow(row.parent[headers[0].key])
+                        }
+                        role="button"
+                        tabIndex={0}
                       >
                         +
-                      </td>
-                    )}
-                    {headers.map((header, j) => (
-                      <td
-                        onClick={() => state.onRowClick(row.id)}
-                        className="body-row-cell"
-                        key={j}
-                        title={row[header.key]}
+                      </div>
+                    </td>
+                  )}
+                  {headers.map((header, j) => (
+                    <td
+                      className="body-row-cell"
+                      /* eslint-disable react/no-array-index-key */
+                      key={j}
+                      /* eslint-enable react/no-array-index-key */
+                      title={row[header.key]}
+                    >
+                      <div
+                        onClick={() => state.onRowClick(row.parent.id)}
+                        onKeyDown={() => state.onRowClick(row.parent.id)}
+                        role="button"
+                        tabIndex={0}
                       >
-                        {row[header.key]}
-                      </td>
-                    ))}
-                  </tr>
-                  {row.children.map((child, j) => {
-                    if (
-                      state.tableState.expandAll ||
-                      state.tableState.expandedRows.includes(
-                        row[headers[0].key]
-                      )
-                    ) {
-                      return (
-                        <tr
-                          className="body-row second-level"
-                          key={data.length + j}
-                        >
-                          <td>&nbsp;</td>
-                          {headers.map((header, k) => (
-                            <td
-                              className="body-row-cell"
-                              key={k}
-                              title={child[header.key]}
-                            >
-                              {child[header.key]}
-                            </td>
-                          ))}
-                        </tr>
-                      );
-                    } else {
-                      return null;
-                    }
-                  })}
-                </React.Fragment>
-              ))}
-            </tbody>
-          </table>
-        </React.Fragment>
-      );
-    })
+                        {row.parent[header.key]}
+                      </div>
+                    </td>
+                  ))}
+                </tr>
+                {rowChildren(row, state, data, headers)}
+              </React.Fragment>
+            ))}
+          </tbody>
+        </table>
+      </React.Fragment>
+    ))
   );
 });
 
