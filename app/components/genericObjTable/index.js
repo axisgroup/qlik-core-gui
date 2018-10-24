@@ -1,22 +1,9 @@
 // @flow
 import React from 'react';
-import { componentFromStream } from '../../../app/utils/observable-config';
-import distinctProp from '../../../app/utils/distinctProp';
-import {
-  switchMap,
-  map,
-  tap,
-  mergeMap,
-  startWith,
-  switchAll,
-  shareReplay,
-  switchMapTo,
-  take,
-  combineLatest
-} from 'rxjs/Operators';
-import { GetAllInfos, CreateSessionObject, GetObjects } from 'rxq/Doc';
-import { GetLayout } from 'rxq/GenericObject';
+import { map, shareReplay, combineLatest } from 'rxjs/Operators';
 
+import { componentFromStream } from '../../utils/observable-config';
+import distinctProp from '../../utils/distinctProp';
 import './genericObjTable.css';
 
 const GenericObjectTable = componentFromStream(props$ => {
@@ -49,50 +36,77 @@ const GenericObjectTable = componentFromStream(props$ => {
       console.log(data);
       return (
         <React.Fragment>
-          <button onClick={() => state.onToggleExpandAll()}>
+          <button type="button" onClick={() => state.onToggleExpandAll()}>
             {state.tableState.expandAll ? 'Collapse All' : 'Expand All'}
           </button>
           <table className="genericObjTable">
             <thead>
               <tr className="header-row">
                 <td>&nbsp;</td>
-                {headers.map((header, i) => (
-                  <td className="header-row-cell" key={i}>
+                {headers.map(header => (
+                  <td className="header-row-cell" key={header.title}>
                     {header.title}
                   </td>
                 ))}
               </tr>
             </thead>
             <tbody className="body">
-              {data.map((row, i) => (
-                <React.Fragment key={i}>
-                  <tr className="body-row top-level" key={i}>
+              {data.map(row => (
+                <React.Fragment key={row.parent[headers[0].key]}>
+                  <tr
+                    className="body-row top-level"
+                    key={row.parent[headers[0].key]}
+                  >
                     {state.tableState.expandAll ||
                     state.tableState.expandedRows.includes(
-                      row[headers[0].key]
+                      row.parent[headers[0].key]
                     ) ? (
-                      <td
-                        className="body-row-cell toggle"
-                        onClick={() => state.onToggleRow(row[headers[0].key])}
-                      >
-                        -
+                      <td className="body-row-cell toggle">
+                        <div
+                          onClick={() =>
+                            state.onToggleRow(row.parent[headers[0].key])
+                          }
+                          onKeyDown={() =>
+                            state.onToggleRow(row.parent[headers[0].key])
+                          }
+                          role="button"
+                          tabIndex={0}
+                        >
+                          -
+                        </div>
                       </td>
                     ) : (
-                      <td
-                        className="body-row-cell toggle"
-                        onClick={() => state.onToggleRow(row[headers[0].key])}
-                      >
-                        +
+                      <td className="body-row-cell toggle">
+                        <div
+                          onClick={() =>
+                            state.onToggleRow(row.parent[headers[0].key])
+                          }
+                          onKeyDown={() =>
+                            state.onToggleRow(row.parent[headers[0].key])
+                          }
+                          role="button"
+                          tabIndex={0}
+                        >
+                          +
+                        </div>
                       </td>
                     )}
                     {headers.map((header, j) => (
                       <td
-                        onClick={() => state.onRowClick(row.id)}
                         className="body-row-cell"
+                        /* eslint-disable react/no-array-index-key */
                         key={j}
+                        /* eslint-enable react/no-array-index-key */
                         title={row[header.key]}
                       >
-                        {row[header.key]}
+                        <div
+                          onClick={() => state.onRowClick(row.parent.name)}
+                          onKeyDown={() => state.onRowClick(row.parent.name)}
+                          role="button"
+                          tabIndex={0}
+                        >
+                          {row.parent[header.key]}
+                        </div>
                       </td>
                     ))}
                   </tr>
@@ -100,29 +114,32 @@ const GenericObjectTable = componentFromStream(props$ => {
                     if (
                       state.tableState.expandAll ||
                       state.tableState.expandedRows.includes(
-                        row[headers[0].key]
+                        row.parent[headers[0].key]
                       )
                     ) {
                       return (
                         <tr
                           className="body-row second-level"
+                          /* eslint-disable react/no-array-index-key */
                           key={data.length + j}
+                          /* eslint-enable react/no-array-index-key */
                         >
                           <td>&nbsp;</td>
                           {headers.map((header, k) => (
                             <td
                               className="body-row-cell"
+                              /* eslint-disable react/no-array-index-key */
                               key={k}
+                              /* eslint-enable react/no-array-index-key */
                               title={child[header.key]}
                             >
-                              {child[header.key]}
+                              {child.parent[header.key]}
                             </td>
                           ))}
                         </tr>
                       );
-                    } else {
-                      return null;
                     }
+                    return null;
                   })}
                 </React.Fragment>
               ))}

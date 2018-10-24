@@ -10,18 +10,22 @@ import {
   shareReplay,
   switchMapTo,
   take,
-  withLatestFrom,
+  mergeMap,
   combineLatest,
   partition
 } from 'rxjs/Operators';
-import { merge } from 'rxjs';
+import { merge, zip } from 'Rxjs';
 import {
   GetAllInfos,
   CreateSessionObject,
   GetObjects,
   GetObject
 } from 'rxq/Doc';
-import { GetLayout, GetFullPropertyTree } from 'rxq/GenericObject';
+import {
+  GetLayout,
+  GetFullPropertyTree,
+  GetChildInfos
+} from 'rxq/GenericObject';
 import {
   toggleRow,
   selectObj,
@@ -33,23 +37,6 @@ import distinctProp from '../../utils/distinctProp';
 import GenericObjectTable from '../genericObjTable';
 import GenericObjectDetail from '../genericObjDetail';
 import './genericObjView.css';
-
-// the sheet objects list from qlik needs a property tree
-const AppObjectList = {
-  qInfo: {
-    qId: '',
-    qType: 'SessionLists'
-  },
-  qAppObjectListDef: {
-    qType: 'sheet',
-    qData: {
-      cells: '/cells',
-      rank: '/rank',
-      columns: '/columns',
-      rows: '/rows'
-    }
-  }
-};
 
 // the Generic Objects table needs headers
 const headerKeys = [
@@ -128,11 +115,32 @@ const GenericObjectView = props$ => {
   );
 
   // Creates a session object that will display all the types of objects in the app currently in a heirarchy form
-  const AppList$ = doc$.pipe(
-    switchMap(docH => docH.ask(CreateSessionObject, AppObjectList)),
-    switchMap(objH => objH.invalidated$.pipe(startWith(objH))),
-    shareReplay(1)
-  );
+  const AppList = objType => {
+    // the objects list from qlik needs a property tree
+    const AppObjectList = {
+      qInfo: {
+        qId: '',
+        qType: 'SessionLists'
+      },
+      qAppObjectListDef: {
+        qType: objType,
+        qData: {
+          cells: '/cells',
+          rank: '/rank',
+          columns: '/columns',
+          rows: '/rows'
+        }
+      }
+    };
+
+    return doc$.pipe(
+      switchMap(docH => docH.ask(CreateSessionObject, AppObjectList)),
+      switchMap(objH => objH.invalidated$.pipe(startWith(objH))),
+      shareReplay(1)
+    );
+  };
+
+  const AppList$ = AppList('sheet');
 
   // This will get a list of all the qTypes currently in the app
   const getAllQTypes$ = doc$.pipe(
@@ -146,16 +154,38 @@ const GenericObjectView = props$ => {
   );
 
   // This will use the list of all the qTypes currently in the app to pull the object info
-  const getAllObjects = (objList: string[]) =>
+  const getAllObjects = (objTypeList: string[]) =>
     doc$.pipe(
       switchMap(docH =>
         docH.ask(GetObjects, {
-          qTypes: objList,
+          qTypes: objTypeList,
           qData: {
             title: '/title'
           }
         })
       ),
+      mergeMap(objList => {
+        const objChildInfo = objList.map(obj =>
+          doc$.pipe(
+            switchMap(docH => docH.ask(GetObject, obj.qInfo.qId)),
+            switchMap(objH => objH.ask(GetChildInfos)),
+            map(objChilds => {
+              const parent = {
+                title:
+                  obj.qInfo.qType === 'sheet'
+                    ? obj.qMeta.title
+                    : obj.qData.title,
+                id: obj.qInfo.qId,
+                type: obj.qInfo.qType
+              };
+              return { children: objChilds, parent };
+            }),
+            take(1)
+          )
+        );
+        return zip(...objChildInfo);
+        // .pipe(map(objs => objs.filter(obj => obj)))
+      }),
       take(1)
     );
 
@@ -164,30 +194,37 @@ const GenericObjectView = props$ => {
   // ==> bring in the state & actions to feed into presentation components
   return AppList$.pipe(
     switchMapTo(getAllQTypes$),
-    switchMap((objList: string[]) => getAllObjects(objList)),
-    withLatestFrom(AppList$.pipe(switchMap(objH => objH.ask(GetLayout)))),
-    map(([objList, heirarchy]) =>
-      // map the two data sources into a single heirarchial structure
-      // the heirarchy needs to get the object title from object list
-      heirarchy.qAppObjectList.qItems.map(sheet => {
-        // match each child in the heirarchy to its twin in the object list, to get the object title
-        const children = sheet.qData.cells.map(child => {
-          const childInfo = objList.find(val => val.qInfo.qId === child.name);
-          return {
-            title: childInfo.qData.title,
-            id: child.name,
-            type: child.type
-          };
-        });
-        // return the sheet name & id along with the child info that's been supplemented by object list
-        return {
-          title: sheet.qMeta.title,
-          type: 'sheet',
-          id: sheet.qInfo.qId,
-          children
-        };
-      })
-    ),
+    switchMap((objTypeList: string[]) => getAllObjects(objTypeList)),
+    map(objParents => {
+      // map the data sources into a heirarchial structure
+      // Step 1 - get all the objects that are children
+      const childrenObjs = objParents
+        .map(obj => obj.children)
+        .reduce((acc, curr) => acc.concat(curr), []);
+      const childrenIDs = childrenObjs.map(child => child.qId);
+      // Step 2 - get all the level 1 parents (are not children of any other objects)
+      const lvl1Parents = objParents.filter(
+        obj => !childrenIDs.includes(obj.parent.id)
+      );
+      // Step 3 - assign all children to their parents
+      const findChildren = parent => {
+        if (parent.children.length > 0) {
+          for (let i = 0; i < parent.children.length; i += 1) {
+            const foundChild = objParents.filter(
+              obj => obj.parent.id === parent.children[i].qId
+            );
+            /* eslint no-param-reassign: ["error", { "props": false }] */
+            parent.children[i] = foundChild[0];
+            findChildren(parent.children[i]);
+          }
+        }
+      };
+      for (let i = 0; i < lvl1Parents.length; i += 1) {
+        findChildren(lvl1Parents[i]);
+      }
+      console.log('lvl1parents', lvl1Parents);
+      return lvl1Parents;
+    }),
     combineLatest(state$, selObjProps$, selObjLayout$),
     map(([result, stateObj, objProps, objLayout]) => (
       <div className="genericObjView">
