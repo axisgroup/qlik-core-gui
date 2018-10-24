@@ -79,15 +79,7 @@ const GenericObjectView = props$ => {
   );
 
   // Get the state and the handlers
-  const state$ = props$.pipe(
-    // map(props => ({
-    //   genericTable: props.genericTable,
-    //   dispatchToggleRow: props.dispatchToggleRow,
-    //   dispatchSelectObj: props.dispatchSelectObj,
-    //   dispatchToggleExpandAll: props.dispatchToggleExpandAll
-    // })),
-    shareReplay(1)
-  );
+  const state$ = props$.pipe(shareReplay(1));
 
   // Partition based on qId state
   const [withQID$, noQID$] = doc$.pipe(

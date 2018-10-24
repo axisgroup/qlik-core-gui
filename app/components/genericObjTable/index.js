@@ -100,8 +100,8 @@ const GenericObjectTable = componentFromStream(props$ => {
                         title={row[header.key]}
                       >
                         <div
-                          onClick={() => state.onRowClick(row.parent.name)}
-                          onKeyDown={() => state.onRowClick(row.parent.name)}
+                          onClick={() => state.onRowClick(row.parent.id)}
+                          onKeyDown={() => state.onRowClick(row.parent.id)}
                           role="button"
                           tabIndex={0}
                         >
