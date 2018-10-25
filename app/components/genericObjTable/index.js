@@ -86,7 +86,14 @@ const GenericObjectTable = componentFromStream(props$ => {
                     /* eslint-enable react/no-array-index-key */
                     title={child.parent[header.key]}
                   >
-                    {child.parent[header.key]}
+                    <div
+                      onClick={() => state.onRowClick(child.parent.id)}
+                      onKeyDown={() => state.onRowClick(child.parent.id)}
+                      role="button"
+                      tabIndex={0}
+                    >
+                      {child.parent[header.key]}
+                    </div>
                   </td>
                 ))}
               </tr>

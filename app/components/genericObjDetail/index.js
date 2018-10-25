@@ -1,37 +1,73 @@
 // @flow
 import React from 'react';
-import { map, shareReplay, combineLatest } from 'rxjs/Operators';
+import { map, filter } from 'rxjs/Operators';
 import { componentFromStream } from '../../utils/observable-config';
-import distinctProp from '../../utils/distinctProp';
 
 import './genericObjDetail.css';
 
 const GenericObjectDetail = componentFromStream(props$ => {
-  // Grab the state and handlers
-  const objProps$ = props$.pipe(
-    distinctProp('objProps'),
-    shareReplay(1)
+  // function that returns a row with property name and value
+  const tableRow = (name, value) => (
+    <tr key={name}>
+      <td>{name}</td>
+      <td>{value}</td>
+    </tr>
   );
 
-  // Grab the data
-  const objLayout$ = props$.pipe(
-    distinctProp('objLayout'),
-    shareReplay(1)
+  const displayObjMeta = qProperty => (
+    <div className="propsSection">
+      <table className="objPropTable">
+        <tbody>
+          {tableRow(
+            'Title',
+            qProperty.title ? qProperty.title : qProperty.qMetaDef.title
+          )}
+          {qProperty.qMetaDef.description
+            ? tableRow('Description', qProperty.qMetaDef.description)
+            : null}
+          {tableRow('qId', qProperty.qInfo.qId)}
+          {tableRow('qType', qProperty.qInfo.qType)}
+        </tbody>
+      </table>
+    </div>
   );
 
-  // // Grab the headers
-  // const headers$ = props$.pipe(
-  //   distinctProp('headers'),
-  //   shareReplay(1)
-  // );
+  const displayObjHyperCubeDef = qHyperCubeDef => (
+    <div className="propsSection">
+      HyperCubeDef
+      <table className="objPropTable">
+        <tbody>
+          {qHyperCubeDef.qDimensions.map(dim =>
+            tableRow('Dimensions', dim.qLibraryId)
+          )}
+        </tbody>
+      </table>
+    </div>
+  );
 
-  return objProps$.pipe(
-    combineLatest(objLayout$),
-    map(([props, layout]) => {
-      console.log(props, layout);
+  // function that returns the display of the object properties
+  const displayObjProps = objProps => {
+    const { qProperty, qChildren } = objProps;
+    console.log(qProperty, qChildren);
+    return (
+      <React.Fragment>
+        {displayObjMeta(qProperty)}
+        {qProperty.qHyperCubeDef
+          ? displayObjHyperCubeDef(qProperty.qHyperCubeDef)
+          : null}
+      </React.Fragment>
+    );
+  };
+
+  return props$.pipe(
+    filter(({ objProps, objLayout }) => objProps && objLayout),
+    map(({ objProps, objLayout }) => {
+      console.log(objLayout);
+      const content = displayObjProps(objProps);
       return (
         <div className="container">
           <div className="properties" />
+          {content}
         </div>
       );
     })

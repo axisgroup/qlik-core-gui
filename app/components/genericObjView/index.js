@@ -12,7 +12,9 @@ import {
   take,
   mergeMap,
   combineLatest,
-  partition
+  partition,
+  mapTo,
+  debounceTime
 } from 'rxjs/Operators';
 import { merge, zip } from 'Rxjs';
 import {
@@ -78,13 +80,18 @@ const GenericObjectView = props$ => {
     shareReplay(1)
   );
 
+  // combine doc handle and qId handle
+  const docQID$ = doc$.pipe(
+    combineLatest(qId$),
+    shareReplay(1)
+  );
+
   // Get the state and the handlers
   const state$ = props$.pipe(shareReplay(1));
 
   // Partition based on qId state
-  const [withQID$, noQID$] = doc$.pipe(
-    combineLatest(qId$),
-    partition(([qId]) => qId.length > 0)
+  const [withQID$, noQID$] = docQID$.pipe(
+    partition(array => array[1].length > 0)
   );
 
   // Get object based on qId
@@ -94,15 +101,15 @@ const GenericObjectView = props$ => {
     shareReplay(1)
   );
 
-  // Gets object properties and terminates if no qID
+  // Gets object properties and maps to null if no qID
   const selObjProps$ = merge(
-    noQID$,
+    noQID$.pipe(mapTo(null)),
     selObj$.pipe(switchMap(objH => objH.ask(GetFullPropertyTree)))
   );
 
-  // Gets object layout
+  // Gets object layout and maps to null if no qID
   const selObjLayout$ = merge(
-    noQID$,
+    noQID$.pipe(mapTo(null)),
     selObj$.pipe(switchMap(objH => objH.ask(GetLayout)))
   );
 
@@ -176,13 +183,14 @@ const GenericObjectView = props$ => {
           )
         );
         return zip(...objChildInfo);
-        // .pipe(map(objs => objs.filter(obj => obj)))
       }),
       take(1)
     );
 
-  // Start with a generic object of app objects that invalidates => get all the types that exist => get all objects of those types
-  // ==> match with the layout of the app objects to get the full heirarchy with all info
+  // Start with a generic object of app objects that invalidates
+  // ==> get all the types that exist
+  // ==> get all objects of those types along with their children
+  // ==> build the heirarchy
   // ==> bring in the state & actions to feed into presentation components
   return AppList$.pipe(
     switchMapTo(getAllQTypes$),
@@ -218,6 +226,7 @@ const GenericObjectView = props$ => {
       return lvl1Parents;
     }),
     combineLatest(state$, selObjProps$, selObjLayout$),
+    debounceTime(100),
     map(([result, stateObj, objProps, objLayout]) => (
       <div className="genericObjView">
         <div className="genericObjTable">
@@ -230,6 +239,7 @@ const GenericObjectView = props$ => {
             onToggleExpandAll={stateObj.dispatchToggleExpandAll}
           />
         </div>
+        <div className="viewSpacer" />
         <div className="genericObjDetail">
           <GenericObjectDetail objProps={objProps} objLayout={objLayout} />
         </div>

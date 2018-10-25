@@ -5,3 +5,37 @@
 .container .properties {
   height: 100%;
 }
+
+.objPropTable {
+  height: 100%;
+  width: 100%;
+}
+
+.objPropTable > tbody {
+  width: 100%;
+  height: calc(100% - 2em);
+}
+
+.objPropTable > tbody tr {
+  width: 100%;
+}
+
+.objPropTable > tbody tr td {
+  overflow-wrap: break-word;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  height: 2em;
+  border-collapse: collapse;
+  border: 1px solid lightgray;
+  cursor: pointer;
+}
+
+.objPropTable > tbody tr.second-level td {
+  overflow-wrap: break-word;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  height: 2em;
+  border-collapse: collapse;
+  border: 1px solid lightgray;
+  background-color: mediumaquamarine;
+}
