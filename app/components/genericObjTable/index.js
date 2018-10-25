@@ -32,11 +32,11 @@ const GenericObjectTable = componentFromStream(props$ => {
 
   const toggleCell = (state, child, headers) =>
     state.tableState.expandAll ||
-    state.tableState.expandedRows.includes(child.parent[headers[0].key]) ? (
+    state.tableState.expandedRows.includes(child.parent[headers[2].key]) ? (
       <td className="body-row-cell toggle">
         <div
-          onClick={() => state.onToggleRow(child.parent[headers[0].key])}
-          onKeyDown={() => state.onToggleRow(child.parent[headers[0].key])}
+          onClick={() => state.onToggleRow(child.parent[headers[2].key])}
+          onKeyDown={() => state.onToggleRow(child.parent[headers[2].key])}
           role="button"
           tabIndex={0}
         >
@@ -46,8 +46,8 @@ const GenericObjectTable = componentFromStream(props$ => {
     ) : (
       <td className="body-row-cell toggle">
         <div
-          onClick={() => state.onToggleRow(child.parent[headers[0].key])}
-          onKeyDown={() => state.onToggleRow(child.parent[headers[0].key])}
+          onClick={() => state.onToggleRow(child.parent[headers[2].key])}
+          onKeyDown={() => state.onToggleRow(child.parent[headers[2].key])}
           role="button"
           tabIndex={0}
         >
@@ -61,7 +61,7 @@ const GenericObjectTable = componentFromStream(props$ => {
       {row.children.map((child, j) => {
         if (
           state.tableState.expandAll ||
-          state.tableState.expandedRows.includes(row.parent[headers[0].key])
+          state.tableState.expandedRows.includes(row.parent[headers[2].key])
         ) {
           return (
             /* eslint-disable react/no-array-index-key */
@@ -128,22 +128,23 @@ const GenericObjectTable = componentFromStream(props$ => {
           </thead>
           <tbody className="body">
             {data.map(row => (
-              <React.Fragment key={row.parent[headers[0].key]}>
+              <React.Fragment key={row.parent[headers[2].key]}>
                 <tr
                   className="body-row top-level"
                   key={row.parent[headers[0].key]}
                 >
-                  {state.tableState.expandAll ||
+                  {toggleCell(state, row, headers)}
+                  {/* {state.tableState.expandAll ||
                   state.tableState.expandedRows.includes(
-                    row.parent[headers[0].key]
+                    row.parent[headers[2].key]
                   ) ? (
                     <td className="body-row-cell toggle">
                       <div
                         onClick={() =>
-                          state.onToggleRow(row.parent[headers[0].key])
+                          state.onToggleRow(row.parent[headers[2].key])
                         }
                         onKeyDown={() =>
-                          state.onToggleRow(row.parent[headers[0].key])
+                          state.onToggleRow(row.parent[headers[2].key])
                         }
                         role="button"
                         tabIndex={0}
@@ -155,10 +156,10 @@ const GenericObjectTable = componentFromStream(props$ => {
                     <td className="body-row-cell toggle">
                       <div
                         onClick={() =>
-                          state.onToggleRow(row.parent[headers[0].key])
+                          state.onToggleRow(row.parent[headers[2].key])
                         }
                         onKeyDown={() =>
-                          state.onToggleRow(row.parent[headers[0].key])
+                          state.onToggleRow(row.parent[headers[2].key])
                         }
                         role="button"
                         tabIndex={0}
@@ -166,7 +167,7 @@ const GenericObjectTable = componentFromStream(props$ => {
                         +
                       </div>
                     </td>
-                  )}
+                  )} */}
                   {headers.map((header, j) => (
                     <td
                       className="body-row-cell"

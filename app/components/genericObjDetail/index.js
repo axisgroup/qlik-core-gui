@@ -38,7 +38,12 @@ const GenericObjectDetail = componentFromStream(props$ => {
       <table className="objPropTable">
         <tbody>
           {qHyperCubeDef.qDimensions.map(dim =>
-            tableRow('Dimensions', dim.qLibraryId)
+            tableRow(
+              'Dimensions',
+              dim.qLibraryId
+                ? `Library ID:  ${dim.qLibraryId}`
+                : dim.qDef.qFieldDefs[0]
+            )
           )}
         </tbody>
       </table>
