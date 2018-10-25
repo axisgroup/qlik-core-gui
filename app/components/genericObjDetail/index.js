@@ -1,82 +1,39 @@
 // @flow
 import React from 'react';
-import { map, filter } from 'rxjs/Operators';
+import { map } from 'rxjs/Operators';
+import Toggles from 'arc-design/components/toggles';
+
 import { componentFromStream } from '../../utils/observable-config';
+import GenericObjectProperties from './genericObjProperties';
 
 import './genericObjDetail.css';
 
-const GenericObjectDetail = componentFromStream(props$ => {
-  // function that returns a row with property name and value
-  const tableRow = (name, value) => (
-    <tr key={name}>
-      <td>{name}</td>
-      <td>{value}</td>
-    </tr>
-  );
-
-  const displayObjMeta = qProperty => (
-    <div className="propsSection">
-      <table className="objPropTable">
-        <tbody>
-          {tableRow(
-            'Title',
-            qProperty.title ? qProperty.title : qProperty.qMetaDef.title
-          )}
-          {qProperty.qMetaDef.description
-            ? tableRow('Description', qProperty.qMetaDef.description)
-            : null}
-          {tableRow('qId', qProperty.qInfo.qId)}
-          {tableRow('qType', qProperty.qInfo.qType)}
-        </tbody>
-      </table>
-    </div>
-  );
-
-  const displayObjHyperCubeDef = qHyperCubeDef => (
-    <div className="propsSection">
-      HyperCubeDef
-      <table className="objPropTable">
-        <tbody>
-          {qHyperCubeDef.qDimensions.map(dim =>
-            tableRow(
-              'Dimensions',
-              dim.qLibraryId
-                ? `Library ID:  ${dim.qLibraryId}`
-                : dim.qDef.qFieldDefs[0]
-            )
-          )}
-        </tbody>
-      </table>
-    </div>
-  );
-
-  // function that returns the display of the object properties
-  const displayObjProps = objProps => {
-    const { qProperty, qChildren } = objProps;
-    console.log(qProperty, qChildren);
-    return (
-      <React.Fragment>
-        {displayObjMeta(qProperty)}
-        {qProperty.qHyperCubeDef
-          ? displayObjHyperCubeDef(qProperty.qHyperCubeDef)
-          : null}
-      </React.Fragment>
-    );
-  };
-
-  return props$.pipe(
-    filter(({ objProps, objLayout }) => objProps && objLayout),
-    map(({ objProps, objLayout }) => {
+const GenericObjectDetail = componentFromStream(props$ =>
+  props$.pipe(
+    map(({ objProps, objLayout, detailState, onSetTab }) => {
+      const options = [
+        { text: 'Properties Overview', value: 'overview' },
+        { text: 'Layout', value: 'layout' },
+        { text: 'JSON View', value: 'json' }
+      ];
+      const onClick = result => {
+        onSetTab(result);
+      };
       console.log(objLayout);
-      const content = displayObjProps(objProps);
       return (
         <div className="container">
-          <div className="properties" />
-          {content}
+          <Toggles
+            options={options}
+            selectedValueProp={detailState.activeTab}
+            onClick={onClick}
+          />
+          {detailState.activeTab === 'overview' ? (
+            <GenericObjectProperties objProps={objProps} />
+          ) : null}
         </div>
       );
     })
-  );
-});
+  )
+);
 
 export default GenericObjectDetail;

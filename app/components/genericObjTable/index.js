@@ -39,8 +39,9 @@ const GenericObjectTable = componentFromStream(props$ => {
           onKeyDown={() => state.onToggleRow(child.parent[headers[2].key])}
           role="button"
           tabIndex={0}
+          className="toggleButton"
         >
-          -
+          <span> - </span>
         </div>
       </td>
     ) : (
@@ -50,8 +51,9 @@ const GenericObjectTable = componentFromStream(props$ => {
           onKeyDown={() => state.onToggleRow(child.parent[headers[2].key])}
           role="button"
           tabIndex={0}
+          className="toggleButton"
         >
-          +
+          <span>+</span>
         </div>
       </td>
     );
@@ -134,40 +136,6 @@ const GenericObjectTable = componentFromStream(props$ => {
                   key={row.parent[headers[0].key]}
                 >
                   {toggleCell(state, row, headers)}
-                  {/* {state.tableState.expandAll ||
-                  state.tableState.expandedRows.includes(
-                    row.parent[headers[2].key]
-                  ) ? (
-                    <td className="body-row-cell toggle">
-                      <div
-                        onClick={() =>
-                          state.onToggleRow(row.parent[headers[2].key])
-                        }
-                        onKeyDown={() =>
-                          state.onToggleRow(row.parent[headers[2].key])
-                        }
-                        role="button"
-                        tabIndex={0}
-                      >
-                        -
-                      </div>
-                    </td>
-                  ) : (
-                    <td className="body-row-cell toggle">
-                      <div
-                        onClick={() =>
-                          state.onToggleRow(row.parent[headers[2].key])
-                        }
-                        onKeyDown={() =>
-                          state.onToggleRow(row.parent[headers[2].key])
-                        }
-                        role="button"
-                        tabIndex={0}
-                      >
-                        +
-                      </div>
-                    </td>
-                  )} */}
                   {headers.map((header, j) => (
                     <td
                       className="body-row-cell"

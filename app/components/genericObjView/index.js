@@ -33,6 +33,7 @@ import {
   selectObj,
   toggleExpandAll
 } from '../../actions/genericTable';
+import { setTab } from '../../actions/genericObjectDetails';
 
 import { componentFromStream } from '../../utils/observable-config';
 import distinctProp from '../../utils/distinctProp';
@@ -49,7 +50,8 @@ const headerKeys = [
 
 // State Management
 const mapStateToProps = state => ({
-  genericTable: state.genericTable
+  genericTable: state.genericTable,
+  genericObjectDetails: state.genericObjectDetails
 });
 
 const tableHandlers = withHandlers({
@@ -61,6 +63,12 @@ const tableHandlers = withHandlers({
   },
   dispatchToggleExpandAll: ({ dispatch }) => () => {
     dispatch(toggleExpandAll());
+  }
+});
+
+const detailHandlers = withHandlers({
+  dispatchSetTab: ({ dispatch }) => (newTab: string) => {
+    dispatch(setTab(newTab));
   }
 });
 // END State Management
@@ -241,7 +249,12 @@ const GenericObjectView = props$ => {
         </div>
         <div className="viewSpacer" />
         <div className="genericObjDetail">
-          <GenericObjectDetail objProps={objProps} objLayout={objLayout} />
+          <GenericObjectDetail
+            objProps={objProps}
+            objLayout={objLayout}
+            detailState={stateObj.genericObjectDetails}
+            onSetTab={stateObj.dispatchSetTab}
+          />
         </div>
       </div>
     ))
@@ -250,5 +263,6 @@ const GenericObjectView = props$ => {
 
 export default compose(
   connect(mapStateToProps),
-  tableHandlers
+  tableHandlers,
+  detailHandlers
 )(componentFromStream(GenericObjectView));

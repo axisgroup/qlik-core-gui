@@ -1,28 +1,49 @@
-.genericObjTable {
+.genericObjProperties {
+  height: 100%;
+  margin-top: 20px;
+}
+
+.genericObjProperties {
+  border-radius: 0px 0px 2px 2px;
+  border-top: 0px;
+  border: #1974bf 1px solid;
+  background-color: white;
+}
+
+.genericObjProperties .propSection {
+  margin-top: 20px;
+}
+
+.objPropTable {
   height: 100%;
   width: 100%;
 }
 
-.genericObjTable > .header-row {
+.objPropTable > thead {
   width: 100%;
+  font-weight: bold;
 }
 
-.genericObjTable > .header-row .header-row-cell {
+.objPropTable > thead td {
   border: 1px solid darkgray;
   border-collapse: collapse;
   height: 2em;
 }
 
-.genericObjTable > .body {
+.objPropTable > thead tr td:first-child {
+  width: 40%;
+}
+
+.objPropTable > tbody {
   width: 100%;
   height: calc(100% - 2em);
 }
 
-.genericObjTable > .body .body-row {
+.objPropTable > tbody tr {
   width: 100%;
 }
 
-.genericObjTable > .body .body-row .body-row-cell {
+.objPropTable > tbody tr td {
   overflow-wrap: break-word;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -32,20 +53,7 @@
   cursor: pointer;
 }
 
-.genericObjTable > .body .toggleButton {
-  height: 100%;
-  width: 100%;
-  display: table;
-  text-align: center;
-}
-
-.genericObjTable > .body .toggleButton > span {
-  height: 100%;
-  display: table-cell;
-  vertical-align: middle;
-}
-
-.genericObjTable > .body .body-row.second-level .body-row-cell {
+.objPropTable > tbody tr.second-level td {
   overflow-wrap: break-word;
   overflow: hidden;
   text-overflow: ellipsis;
