@@ -108,7 +108,7 @@
     "tool",
     "qvf"
   ],
-  "homepage": "",
+  "homepage": "http://www.axisgroup.com/",
   "jest": {
     "testURL": "http://localhost/",
     "moduleNameMapper": {
