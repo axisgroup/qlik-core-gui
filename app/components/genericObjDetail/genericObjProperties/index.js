@@ -87,8 +87,7 @@ const GenericObjectProperties = componentFromStream(props$ => {
 
   // function that returns the display of the object properties
   const displayObjProps = objProps => {
-    const { qProperty, qChildren } = objProps;
-    console.log(qChildren);
+    const { qProperty } = objProps;
     return (
       <React.Fragment>
         {displayObjMeta(qProperty)}

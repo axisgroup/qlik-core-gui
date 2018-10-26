@@ -5,6 +5,7 @@ import Toggles from 'arc-design/components/toggles';
 
 import { componentFromStream } from '../../utils/observable-config';
 import GenericObjectProperties from './genericObjProperties';
+import GenericObjectLayout from './genericObjLayout';
 
 import './genericObjDetail.css';
 
@@ -19,7 +20,6 @@ const GenericObjectDetail = componentFromStream(props$ =>
       const onClick = result => {
         onSetTab(result);
       };
-      console.log(objLayout);
       return (
         <div className="container">
           <Toggles
@@ -29,6 +29,9 @@ const GenericObjectDetail = componentFromStream(props$ =>
           />
           {detailState.activeTab === 'overview' ? (
             <GenericObjectProperties objProps={objProps} />
+          ) : null}
+          {detailState.activeTab === 'layout' ? (
+            <GenericObjectLayout objLayout={objLayout} />
           ) : null}
         </div>
       );
