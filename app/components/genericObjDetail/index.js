@@ -19,6 +19,8 @@ const GenericObjectDetail = componentFromStream(props$ =>
         { text: 'Properties Editor', value: 'json' },
         { text: 'Layout Viewer', value: 'layout' }
       ];
+      const objPropsOnly = objProps;
+      if (objPropsOnly) delete objPropsOnly.qChildren;
       const onClick = result => {
         onSetTab(result);
       };
@@ -40,7 +42,7 @@ const GenericObjectDetail = componentFromStream(props$ =>
               ) : null}
 
               {detailState.activeTab === 'json' ? (
-                <GenericObjectPropEditor objProps={objProps} />
+                <GenericObjectPropEditor objProps={objPropsOnly} />
               ) : null}
             </Tile>
           </div>

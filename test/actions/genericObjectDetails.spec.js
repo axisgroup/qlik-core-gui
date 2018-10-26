@@ -8,6 +8,13 @@ describe('actions', () => {
     });
   });
 
+  // it('should create a set properties action', () => {
+  //   expect(actions.setProperties('{props}')).toEqual({
+  //     type: actions.SET_PROPERTIES,
+  //     payload: '{props}'
+  //   })
+  // })
+
   it('should create a set tab action with null payload if input is not valid', () => {
     expect(actions.setTab(1)).toEqual({
       type: actions.SET_TAB,
