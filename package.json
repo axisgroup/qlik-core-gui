@@ -45,8 +45,8 @@
     ]
   },
   "build": {
-    "productName": "ElectronReact",
-    "appId": "org.develar.ElectronReact",
+    "productName": "Qlik Core GUI",
+    "appId": "axis.qlikCoreGui",
     "files": [
       "dist/",
       "node_modules/",
@@ -91,13 +91,13 @@
     "url": "git+https://github.com/chentsulin/electron-react-boilerplate.git"
   },
   "author": {
-    "name": "C. T. Lin",
-    "email": "chentsulin@gmail.com",
-    "url": "https://github.com/chentsulin"
+    "name": "Sundeep Paruchuri",
+    "email": "sparuchuri@axisgroup.com.com",
+    "url": "https://github.com/axisgroup/"
   },
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/chentsulin/electron-react-boilerplate/issues"
+    "url": "https://github.com/axisgroup/qlik-core-gui/issues"
   },
   "keywords": [
     "axis",
@@ -108,7 +108,7 @@
     "tool",
     "qvf"
   ],
-  "homepage": "",
+  "homepage": "http://www.axisgroup.com/",
   "jest": {
     "testURL": "http://localhost/",
     "moduleNameMapper": {

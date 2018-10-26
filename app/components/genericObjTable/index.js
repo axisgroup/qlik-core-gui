@@ -1,6 +1,8 @@
 // @flow
 import React from 'react';
 import { map, shareReplay, combineLatest } from 'rxjs/Operators';
+import Tile from 'arc-design/components/tile';
+import Button from 'arc-design/components/Button';
 
 import { componentFromStream } from '../../utils/observable-config';
 import distinctProp from '../../utils/distinctProp';
@@ -113,54 +115,60 @@ const GenericObjectTable = componentFromStream(props$ => {
   return data$.pipe(
     combineLatest(headers$, state$),
     map(([data, headers, state]) => (
-      <React.Fragment>
-        <button type="button" onClick={() => state.onToggleExpandAll()}>
-          {state.tableState.expandAll ? 'Collapse All' : 'Expand All'}
-        </button>
-        <table className="genericObjTable">
-          <thead>
-            <tr className="header-row">
-              <td>&nbsp;</td>
-              {headers.map(header => (
-                <td className="header-row-cell" key={header.title}>
-                  {header.title}
-                </td>
-              ))}
-            </tr>
-          </thead>
-          <tbody className="body">
-            {data.map(row => (
-              <React.Fragment key={row.parent[headers[2].key]}>
-                <tr
-                  className="body-row top-level"
-                  key={row.parent[headers[0].key]}
-                >
-                  {toggleCell(state, row, headers)}
-                  {headers.map((header, j) => (
-                    <td
-                      className="body-row-cell"
-                      /* eslint-disable react/no-array-index-key */
-                      key={j}
-                      /* eslint-enable react/no-array-index-key */
-                      title={row[header.key]}
-                    >
-                      <div
-                        onClick={() => state.onRowClick(row.parent.id)}
-                        onKeyDown={() => state.onRowClick(row.parent.id)}
-                        role="button"
-                        tabIndex={0}
-                      >
-                        {row.parent[header.key]}
-                      </div>
+      <div className="genericObjTableContainer">
+        <div className="header">
+          <Button onClick={() => state.onToggleExpandAll()}>
+            {state.tableState.expandAll ? 'Collapse All' : 'Expand All'}
+          </Button>
+        </div>
+        <div className="tileWrapper">
+          <Tile>
+            <table className="genericObjTable">
+              <thead>
+                <tr className="header-row">
+                  <td>&nbsp;</td>
+                  {headers.map(header => (
+                    <td className="header-row-cell" key={header.title}>
+                      {header.title}
                     </td>
                   ))}
                 </tr>
-                {rowChildren(row, state, data, headers)}
-              </React.Fragment>
-            ))}
-          </tbody>
-        </table>
-      </React.Fragment>
+              </thead>
+              <tbody className="body">
+                {data.map(row => (
+                  <React.Fragment key={row.parent[headers[2].key]}>
+                    <tr
+                      className="body-row top-level"
+                      key={row.parent[headers[0].key]}
+                    >
+                      {toggleCell(state, row, headers)}
+                      {headers.map((header, j) => (
+                        <td
+                          className="body-row-cell"
+                          /* eslint-disable react/no-array-index-key */
+                          key={j}
+                          /* eslint-enable react/no-array-index-key */
+                          title={row[header.key]}
+                        >
+                          <div
+                            onClick={() => state.onRowClick(row.parent.id)}
+                            onKeyDown={() => state.onRowClick(row.parent.id)}
+                            role="button"
+                            tabIndex={0}
+                          >
+                            {row.parent[header.key]}
+                          </div>
+                        </td>
+                      ))}
+                    </tr>
+                    {rowChildren(row, state, data, headers)}
+                  </React.Fragment>
+                ))}
+              </tbody>
+            </table>
+          </Tile>
+        </div>
+      </div>
     ))
   );
 });

@@ -10,7 +10,6 @@ import './genericObjPropEditor.css';
 const GenericObjectPropEditor = componentFromStream(props$ => {
   // function that returns the display of the object layout
   const displayObjLayout = objProperties => (
-    // <pre>{JSON.stringify(objLayout, null, 2)}</pre>
     <JSONInput
       id="unique"
       placeholder={objProperties}

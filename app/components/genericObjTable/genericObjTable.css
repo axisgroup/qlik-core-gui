@@ -3,6 +3,10 @@
   width: 100%;
 }
 
+.genericObjTableContainer .arc-component .arc-button button {
+  height: 36px;
+}
+
 .genericObjTable > .header-row {
   width: 100%;
 }

@@ -1,13 +1,14 @@
 // @flow
-import React, { Component } from 'react';
-import GenericObjectView from '../../components/genericObjView';
+import React from 'react';
 import Layout from 'arc-design/components/layout';
-import NavBar from '../../components/navbar';
-import ConfigInput from '../../components/configInput';
-import QlikContent from '../QlikContent';
-
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
+import NavBar from '../../components/navbar';
+/* eslint-disable no-unused-vars */
+import ConfigInput from '../../components/configInput';
+/* eslint-enable no-unused-vars */
+import QlikContent from '../QlikContent';
+
 import * as ConfigActions from '../../actions/config';
 import type { Config } from '../../reducers/types';
 
@@ -30,35 +31,29 @@ function mapDispatchToProps(dispatch) {
 }
 
 const HomePage = (props: Props) => {
-  const { setConfig, removeConfig/*, config*/ } = props;
-  
-  /*** DELETE THIS LATER ***/
-  const config = {
-    host: 'localhost',
-    port: 9076,
-    appname: 'drugcases.qvf'
-  };
-  /*** DELETE THIS LATER ***/
-  let content;
-  if (config.host && config.appname && config.port) {
-    content = <QlikContent />
-  } else {
-    content = <ConfigInput onSubmit={setConfig} />;
-  }
-    return (
-      <div className="homeView">
-        <Layout>
-          <Layout.PrimaryHeader>
-            <NavBar />
-          </Layout.PrimaryHeader>
-          <Layout.Sidebar> </Layout.Sidebar>
-          {content}
-        </Layout>
-      </div>
-    );
-};
+  /* eslint-disable no-unused-vars */
+  const { setConfig, removeConfig, config } = props;
+  /* eslint-enable no-unused-vars */
 
-// export default HomePage;
+  const content = // <QlikContent />;
+    config.host && config.appname && config.port ? (
+      <QlikContent />
+    ) : (
+      <ConfigInput onSubmit={setConfig} />
+    );
+
+  return (
+    <div className="homeView">
+      <Layout>
+        <Layout.PrimaryHeader>
+          <NavBar />
+        </Layout.PrimaryHeader>
+        <Layout.Sidebar />
+        {content}
+      </Layout>
+    </div>
+  );
+};
 
 // $FlowFixMe
 export default connect(
