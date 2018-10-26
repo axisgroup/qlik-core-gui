@@ -4,7 +4,9 @@ import Layout from 'arc-design/components/layout';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import NavBar from '../../components/navbar';
+/* eslint-disable no-unused-vars */
 import ConfigInput from '../../components/configInput';
+/* eslint-enable no-unused-vars */
 import QlikContent from '../QlikContent';
 
 import * as ConfigActions from '../../actions/config';
@@ -14,8 +16,8 @@ import './homepage.css';
 
 type Props = {
   config: Config,
-  setConfig: (config: Config) => void // ,
-  // removeConfig: () => void
+  setConfig: (config: Config) => void,
+  removeConfig: () => void
 };
 
 function mapStateToProps(state) {
@@ -29,25 +31,16 @@ function mapDispatchToProps(dispatch) {
 }
 
 const HomePage = (props: Props) => {
-  const {
-    setConfig,
-    // removeConfig,
-    config
-  } = props;
+  /* eslint-disable no-unused-vars */
+  const { setConfig, removeConfig, config } = props;
+  /* eslint-enable no-unused-vars */
 
-  // DELETE THIS LATER
-  // const config = {
-  //   host: 'localhost',
-  //   port: 9076,
-  //   appname: 'drugcases.qvf'
-  // };
-
-  const content =
-    config.host && config.appname && config.port ? (
-      <QlikContent />
-    ) : (
-      <ConfigInput onSubmit={setConfig} />
-    );
+  const content = <QlikContent />;
+  // config.host && config.appname && config.port ? (
+  //   <QlikContent />
+  // ) : (
+  //   <ConfigInput onSubmit={setConfig} />
+  // );
 
   return (
     <div className="homeView">

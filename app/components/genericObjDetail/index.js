@@ -2,6 +2,7 @@
 import React from 'react';
 import { map } from 'rxjs/Operators';
 import Toggles from 'arc-design/components/toggles';
+import Tile from 'arc-design/components/tile';
 
 import { componentFromStream } from '../../utils/observable-config';
 import GenericObjectProperties from './genericObjProperties';
@@ -22,21 +23,27 @@ const GenericObjectDetail = componentFromStream(props$ =>
         onSetTab(result);
       };
       return (
-        <div className="container">
+        <div className="genObjDetailContainer">
           <Toggles
             options={options}
             selectedValueProp={detailState.activeTab}
             onClick={onClick}
           />
-          {detailState.activeTab === 'overview' ? (
-            <GenericObjectProperties objProps={objProps} />
-          ) : null}
-          {detailState.activeTab === 'layout' ? (
-            <GenericObjectLayout objLayout={objLayout} />
-          ) : null}
-          {detailState.activeTab === 'json' ? (
-            <GenericObjectPropEditor objProps={objProps} />
-          ) : null}
+          <div className="tileWrapper">
+            <Tile>
+              {detailState.activeTab === 'overview' ? (
+                <GenericObjectProperties objProps={objProps} />
+              ) : null}
+
+              {detailState.activeTab === 'layout' ? (
+                <GenericObjectLayout objLayout={objLayout} />
+              ) : null}
+
+              {detailState.activeTab === 'json' ? (
+                <GenericObjectPropEditor objProps={objProps} />
+              ) : null}
+            </Tile>
+          </div>
         </div>
       );
     })

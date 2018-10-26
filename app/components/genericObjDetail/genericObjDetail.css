@@ -1,11 +1,13 @@
-.container {
+.genObjDetailContainer {
   height: 100%;
 }
 
-.container .properties {
+.genObjDetailContainer .tileWrapper {
   height: 100%;
+  width: 100%;
+  margin-top: 20px;
 }
 
-.arc-toggles button {
+.genObjDetailContainer .arc-toggles button {
   vertical-align: top;
 }

@@ -1,5 +1,4 @@
-import { from, Observable } from 'rxjs';
-import React, { ReactNode } from 'react';
+import { from } from 'rxjs';
 import {
   componentFromStreamWithConfig,
   mapPropsStreamWithConfig,

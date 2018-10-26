@@ -1,93 +1,119 @@
 // @flow
 import React from 'react';
 import { map } from 'rxjs/Operators';
+import Table from 'arc-design/components/table';
 import { componentFromStream } from '../../../utils/observable-config';
-
 import './genericObjProperties.css';
 
 const GenericObjectProperties = componentFromStream(props$ => {
-  // function that returns a row with property name and value
-  const tableRow = (name, value, key) => (
-    <tr key={key}>
-      <td>{name}</td>
-      <td>{value}</td>
-    </tr>
-  );
+  const displayObjMeta = qProperty => {
+    const columns = [
+      {
+        key: 'name',
+        title: 'Property Name',
+        dataIndex: 'name',
+        alignment: 'left'
+      },
+      {
+        key: 'value',
+        title: 'Property Value',
+        dataIndex: 'value',
+        alignment: 'left'
+      }
+    ];
 
-  const displayObjMeta = qProperty => (
-    <div className="propsSection">
-      <table className="objPropTable">
-        <thead>
-          <tr>
-            <td>Property Name</td>
-            <td>Property Value</td>
-          </tr>
-        </thead>
-        <tbody>
-          {tableRow(
-            'Title',
-            qProperty.title ? qProperty.title : qProperty.qMetaDef.title,
-            1
-          )}
-          {qProperty.qMetaDef.description
-            ? tableRow('Description', qProperty.qMetaDef.description, 2)
-            : null}
-          {tableRow('qId', qProperty.qInfo.qId, 3)}
-          {tableRow('qType', qProperty.qInfo.qType, 4)}
-        </tbody>
-      </table>
-    </div>
-  );
+    const metaData = [
+      {
+        key: '1',
+        name: 'Title',
+        value: qProperty.title ? qProperty.title : qProperty.qMetaDef.title
+      },
+      {
+        key: '3',
+        name: 'qId',
+        value: qProperty.qInfo.qId
+      },
+      {
+        key: '4',
+        name: 'qType',
+        value: qProperty.qInfo.qType
+      }
+    ];
 
-  const displayDimDef = qDimensions => (
-    <div className="propSection">
-      Dimensions: {` (${qDimensions.length})`}
-      <table className="objPropTable">
-        <thead>
-          <tr>
-            <td>Library ID</td>
-            <td>Definitions</td>
-          </tr>
-        </thead>
-        <tbody>
-          {qDimensions.map(dim =>
-            tableRow(
-              dim.qLibraryId ? dim.qLibraryId : '',
-              dim.qDef.qFieldDefs ? dim.qDef.qFieldDefs.join(', ') : '',
-              dim.qLibraryId ? dim.qLibraryId : dim.qDef.qFieldDefs.join(', ')
-            )
-          )}
-        </tbody>
-      </table>
-    </div>
-  );
+    if (qProperty.qMetaDef.description) {
+      metaData.push({
+        key: '2',
+        name: 'qId',
+        value: qProperty.qMetaDef.description
+      });
+    }
+    return <Table data={metaData} columns={columns} />;
+  };
 
-  const displayMeasureDef = qMeasures => (
-    <div className="propSection">
-      Measures: {` (${qMeasures.length})`}
-      <table className="objPropTable">
-        <thead>
-          <tr>
-            <td>Library ID</td>
-            <td>Definitions</td>
-          </tr>
-        </thead>
-        <tbody>
-          {qMeasures.map(measure =>
-            tableRow(
-              measure.qLibraryId ? measure.qLibraryId : '',
-              measure.qDef.qDef ? measure.qDef.qDef : '',
-              measure.qLibraryId ? measure.qLibraryId : measure.qDef.qDef
-            )
-          )}
-        </tbody>
-      </table>
-    </div>
-  );
+  const displayDimDef = qDimensions => {
+    const columns = [
+      {
+        key: 'libId',
+        title: 'Library ID',
+        dataIndex: 'libId',
+        alignment: 'left'
+      },
+      {
+        key: 'qDef',
+        title: 'Definitions',
+        dataIndex: 'qDef',
+        alignment: 'left'
+      }
+    ];
+
+    const dimensionData = qDimensions.map((dim, i) => ({
+      key: i,
+      libId: dim.qLibraryId ? dim.qLibraryId : '',
+      qDef: dim.qDef.qFieldDefs ? dim.qDef.qFieldDefs.join(', ') : ''
+    }));
+
+    return (
+      <div className="objPropTableTitle">
+        <div>Dimensions</div>
+        <Table data={dimensionData} columns={columns} />
+      </div>
+    );
+  };
+
+  const displayMeasureDef = qMeasures => {
+    const columns = [
+      {
+        key: 'libId',
+        title: 'Library ID',
+        dataIndex: 'libId',
+        alignment: 'left'
+      },
+      {
+        key: 'qDef',
+        title: 'Definitions',
+        dataIndex: 'qDef',
+        alignment: 'left'
+      }
+    ];
+
+    const measureData = qMeasures.map((measure, i) => ({
+      key: i,
+      libId: measure.qLibraryId ? measure.qLibraryId : '',
+      qDef: measure.qDef.qDef ? measure.qDef.qDef : ''
+    }));
+
+    return (
+      <div className="objPropTableTitle">
+        <div>Measures</div>
+        <Table data={measureData} columns={columns} />
+      </div>
+    );
+  };
 
   // function that returns the display of the object properties
   const displayObjProps = objProps => {
     const { qProperty } = objProps;
+
     return (
       <React.Fragment>
         {displayObjMeta(qProperty)}
@@ -102,7 +128,6 @@ const GenericObjectProperties = componentFromStream(props$ => {
   };
 
   return props$.pipe(
-    // filter(({ objProps }) => objProps ),
     map(({ objProps }) => {
       const content = objProps
         ? displayObjProps(objProps)

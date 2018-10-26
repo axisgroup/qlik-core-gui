@@ -1,64 +1,25 @@
 .genericObjProperties {
   height: 100%;
-  margin-top: 20px;
 }
 
-.genericObjProperties {
-  border-radius: 0px 0px 2px 2px;
-  border-top: 0px;
-  border: #1974bf 1px solid;
-  background-color: white;
+.genericObjProperties .arc-component {
+  width: 100%;
+}
+
+.genericObjProperties .arc-component .arc-table {
+  width: 100%;
 }
 
 .genericObjProperties .propSection {
   margin-top: 20px;
 }
 
-.objPropTable {
-  height: 100%;
-  width: 100%;
+.objPropTableTitle {
+  color: #586f7a;
+  text-decoration: underline;
+  margin: 20px 0px;
 }
 
-.objPropTable > thead {
-  width: 100%;
-  font-weight: bold;
-}
-
-.objPropTable > thead td {
-  border: 1px solid darkgray;
-  border-collapse: collapse;
-  height: 2em;
-}
-
-.objPropTable > thead tr td:first-child {
-  width: 40%;
-}
-
-.objPropTable > tbody {
-  width: 100%;
-  height: calc(100% - 2em);
-}
-
-.objPropTable > tbody tr {
-  width: 100%;
-}
-
-.objPropTable > tbody tr td {
-  overflow-wrap: break-word;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  height: 2em;
-  border-collapse: collapse;
-  border: 1px solid lightgray;
-  cursor: pointer;
-}
-
-.objPropTable > tbody tr.second-level td {
-  overflow-wrap: break-word;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  height: 2em;
-  border-collapse: collapse;
-  border: 1px solid lightgray;
-  background-color: mediumaquamarine;
+.objPropTableTitle div {
+  margin-bottom: 10px;
 }
