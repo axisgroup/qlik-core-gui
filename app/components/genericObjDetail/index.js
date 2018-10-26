@@ -1,41 +1,46 @@
 // @flow
 import React from 'react';
-import { map, shareReplay, combineLatest } from 'rxjs/Operators';
+import { map } from 'rxjs/Operators';
+import Toggles from 'arc-design/components/toggles';
+
 import { componentFromStream } from '../../utils/observable-config';
-import distinctProp from '../../utils/distinctProp';
+import GenericObjectProperties from './genericObjProperties';
+import GenericObjectLayout from './genericObjLayout';
+import GenericObjectPropEditor from './genericObjPropEditor';
 
 import './genericObjDetail.css';
 
-const GenericObjectDetail = componentFromStream(props$ => {
-  // Grab the state and handlers
-  const objProps$ = props$.pipe(
-    distinctProp('objProps'),
-    shareReplay(1)
-  );
-
-  // Grab the data
-  const objLayout$ = props$.pipe(
-    distinctProp('objLayout'),
-    shareReplay(1)
-  );
-
-  // // Grab the headers
-  // const headers$ = props$.pipe(
-  //   distinctProp('headers'),
-  //   shareReplay(1)
-  // );
-
-  return objProps$.pipe(
-    combineLatest(objLayout$),
-    map(([props, layout]) => {
-      console.log(props, layout);
+const GenericObjectDetail = componentFromStream(props$ =>
+  props$.pipe(
+    map(({ objProps, objLayout, detailState, onSetTab }) => {
+      const options = [
+        { text: 'Overview', value: 'overview' },
+        { text: 'Properties Editor', value: 'json' },
+        { text: 'Layout Viewer', value: 'layout' }
+      ];
+      const onClick = result => {
+        onSetTab(result);
+      };
       return (
         <div className="container">
-          <div className="properties" />
+          <Toggles
+            options={options}
+            selectedValueProp={detailState.activeTab}
+            onClick={onClick}
+          />
+          {detailState.activeTab === 'overview' ? (
+            <GenericObjectProperties objProps={objProps} />
+          ) : null}
+          {detailState.activeTab === 'layout' ? (
+            <GenericObjectLayout objLayout={objLayout} />
+          ) : null}
+          {detailState.activeTab === 'json' ? (
+            <GenericObjectPropEditor objProps={objProps} />
+          ) : null}
         </div>
       );
     })
-  );
-});
+  )
+);
 
 export default GenericObjectDetail;

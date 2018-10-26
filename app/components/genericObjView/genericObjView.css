@@ -4,13 +4,20 @@
 }
 
 .genericObjView > .genericObjTable {
-  width: 40%;
+  width: 35%;
   display: inline-block;
   vertical-align: top;
 }
 
 .genericObjView > .genericObjDetail {
-  width: 60%;
+  width: 55%;
+  display: inline-block;
+  vertical-align: top;
+}
+
+.genericObjView > .viewSpacer {
+  height: 100%;
+  width: 10%;
   display: inline-block;
   vertical-align: top;
 }

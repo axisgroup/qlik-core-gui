@@ -7,6 +7,7 @@ import { createLogger } from 'redux-logger';
 import rootReducer from '../reducers';
 import * as configActions from '../actions/config';
 import * as genericTableActions from '../actions/genericTable';
+import * as genericObjectDetailActions from '../actions/genericObjectDetails';
 import type { appState } from '../reducers/types';
 
 const history = createHashHistory();
@@ -38,6 +39,7 @@ const configureStore = (initialState?: appState) => {
   const actionCreators = {
     ...configActions,
     ...genericTableActions,
+    ...genericObjectDetailActions,
     ...routerActions
   };
   // If Redux DevTools Extension is installed use it, otherwise use Redux compose

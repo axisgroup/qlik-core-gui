@@ -212,6 +212,7 @@
     "history": "^4.7.2",
     "react": "^16.4.1",
     "react-dom": "^16.4.1",
+    "react-json-editor-ajrm": "^2.5.8",
     "react-qae": "^0.0.3",
     "react-redux": "^5.0.7",
     "react-router": "^4.3.1",

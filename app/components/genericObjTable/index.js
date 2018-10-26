@@ -32,26 +32,28 @@ const GenericObjectTable = componentFromStream(props$ => {
 
   const toggleCell = (state, child, headers) =>
     state.tableState.expandAll ||
-    state.tableState.expandedRows.includes(child.parent[headers[0].key]) ? (
+    state.tableState.expandedRows.includes(child.parent[headers[2].key]) ? (
       <td className="body-row-cell toggle">
         <div
-          onClick={() => state.onToggleRow(child.parent[headers[0].key])}
-          onKeyDown={() => state.onToggleRow(child.parent[headers[0].key])}
+          onClick={() => state.onToggleRow(child.parent[headers[2].key])}
+          onKeyDown={() => state.onToggleRow(child.parent[headers[2].key])}
           role="button"
           tabIndex={0}
+          className="toggleButton"
         >
-          -
+          <span> - </span>
         </div>
       </td>
     ) : (
       <td className="body-row-cell toggle">
         <div
-          onClick={() => state.onToggleRow(child.parent[headers[0].key])}
-          onKeyDown={() => state.onToggleRow(child.parent[headers[0].key])}
+          onClick={() => state.onToggleRow(child.parent[headers[2].key])}
+          onKeyDown={() => state.onToggleRow(child.parent[headers[2].key])}
           role="button"
           tabIndex={0}
+          className="toggleButton"
         >
-          +
+          <span>+</span>
         </div>
       </td>
     );
@@ -61,7 +63,7 @@ const GenericObjectTable = componentFromStream(props$ => {
       {row.children.map((child, j) => {
         if (
           state.tableState.expandAll ||
-          state.tableState.expandedRows.includes(row.parent[headers[0].key])
+          state.tableState.expandedRows.includes(row.parent[headers[2].key])
         ) {
           return (
             /* eslint-disable react/no-array-index-key */
@@ -86,7 +88,14 @@ const GenericObjectTable = componentFromStream(props$ => {
                     /* eslint-enable react/no-array-index-key */
                     title={child.parent[header.key]}
                   >
-                    {child.parent[header.key]}
+                    <div
+                      onClick={() => state.onRowClick(child.parent.id)}
+                      onKeyDown={() => state.onRowClick(child.parent.id)}
+                      role="button"
+                      tabIndex={0}
+                    >
+                      {child.parent[header.key]}
+                    </div>
                   </td>
                 ))}
               </tr>
@@ -121,45 +130,12 @@ const GenericObjectTable = componentFromStream(props$ => {
           </thead>
           <tbody className="body">
             {data.map(row => (
-              <React.Fragment key={row.parent[headers[0].key]}>
+              <React.Fragment key={row.parent[headers[2].key]}>
                 <tr
                   className="body-row top-level"
                   key={row.parent[headers[0].key]}
                 >
-                  {state.tableState.expandAll ||
-                  state.tableState.expandedRows.includes(
-                    row.parent[headers[0].key]
-                  ) ? (
-                    <td className="body-row-cell toggle">
-                      <div
-                        onClick={() =>
-                          state.onToggleRow(row.parent[headers[0].key])
-                        }
-                        onKeyDown={() =>
-                          state.onToggleRow(row.parent[headers[0].key])
-                        }
-                        role="button"
-                        tabIndex={0}
-                      >
-                        -
-                      </div>
-                    </td>
-                  ) : (
-                    <td className="body-row-cell toggle">
-                      <div
-                        onClick={() =>
-                          state.onToggleRow(row.parent[headers[0].key])
-                        }
-                        onKeyDown={() =>
-                          state.onToggleRow(row.parent[headers[0].key])
-                        }
-                        role="button"
-                        tabIndex={0}
-                      >
-                        +
-                      </div>
-                    </td>
-                  )}
+                  {toggleCell(state, row, headers)}
                   {headers.map((header, j) => (
                     <td
                       className="body-row-cell"

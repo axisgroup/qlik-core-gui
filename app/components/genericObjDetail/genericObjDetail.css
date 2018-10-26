@@ -5,3 +5,7 @@
 .container .properties {
   height: 100%;
 }
+
+.arc-toggles button {
+  vertical-align: top;
+}
