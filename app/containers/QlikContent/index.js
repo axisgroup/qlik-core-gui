@@ -29,16 +29,17 @@ function mapDispatchToProps(dispatch) {
 
 const QlikContent = (props: Props) => {
   /* eslint-disable no-unused-vars */
-  const { removeConfig /* , config */ } = props;
+  const { removeConfig, config } = props;
   /* eslint-enable no-unused-vars */
 
   // DELETE THIS LATER
-  const config = {
-    host: 'localhost',
-    port: 9076,
-    appname: 'AUM and Flows_Scramble_ExpDeOpt.qvf'
-  };
+  // const config = {
+  //   host: 'localhost',
+  //   port: 9076,
+  //   appname: 'AUM and Flows_Scramble_ExpDeOpt.qvf'
+  // };
   // END DELETE THIS
+
   let QaeContext;
   if (config.host && config.appname && config.port) {
     QaeContext = connectQlik(config);

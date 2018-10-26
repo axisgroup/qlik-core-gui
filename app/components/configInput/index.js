@@ -28,7 +28,7 @@ const ConfigInput = (props: Props) => {
   let appname: string;
   return (
     <form onSubmit={() => onSubmit({ host, port, appname })}>
-      <label htmlFor="host">Host</label>
+      <label htmlFor="host">Host: </label>
       <input
         id="host"
         value={host}
@@ -38,7 +38,7 @@ const ConfigInput = (props: Props) => {
         }}
       />
       <div className="spacer" />
-      <label htmlFor="port">Port:</label>
+      <label htmlFor="port">Port: </label>
       <input
         id="port"
         value={port}
@@ -48,7 +48,7 @@ const ConfigInput = (props: Props) => {
         }}
       />
       <div className="spacer" />
-      <label htmlFor="appname">App Name:</label>
+      <label htmlFor="appname">App Name: </label>
       <input
         id="appname"
         value={appname}
