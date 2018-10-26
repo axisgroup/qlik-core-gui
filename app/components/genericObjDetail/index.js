@@ -6,6 +6,7 @@ import Toggles from 'arc-design/components/toggles';
 import { componentFromStream } from '../../utils/observable-config';
 import GenericObjectProperties from './genericObjProperties';
 import GenericObjectLayout from './genericObjLayout';
+import GenericObjectPropEditor from './genericObjPropEditor';
 
 import './genericObjDetail.css';
 
@@ -13,9 +14,9 @@ const GenericObjectDetail = componentFromStream(props$ =>
   props$.pipe(
     map(({ objProps, objLayout, detailState, onSetTab }) => {
       const options = [
-        { text: 'Properties Overview', value: 'overview' },
-        { text: 'Layout', value: 'layout' },
-        { text: 'JSON View', value: 'json' }
+        { text: 'Overview', value: 'overview' },
+        { text: 'Properties Editor', value: 'json' },
+        { text: 'Layout Viewer', value: 'layout' }
       ];
       const onClick = result => {
         onSetTab(result);
@@ -32,6 +33,9 @@ const GenericObjectDetail = componentFromStream(props$ =>
           ) : null}
           {detailState.activeTab === 'layout' ? (
             <GenericObjectLayout objLayout={objLayout} />
+          ) : null}
+          {detailState.activeTab === 'json' ? (
+            <GenericObjectPropEditor objProps={objProps} />
           ) : null}
         </div>
       );
