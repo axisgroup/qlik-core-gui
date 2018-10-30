@@ -43,9 +43,8 @@ import './genericObjView.css';
 
 // the Generic Objects table needs headers
 const headerKeys = [
-  { key: 'title', title: 'Name' },
-  { key: 'type', title: 'Type' },
-  { key: 'id', title: 'qId' }
+  { key: 'name', title: 'Name/qID' },
+  { key: 'type', title: 'Type' }
 ];
 
 // State Management
@@ -183,7 +182,8 @@ const GenericObjectView = props$ => {
                     ? obj.qMeta.title
                     : obj.qData.title,
                 id: obj.qInfo.qId,
-                type: obj.qInfo.qType
+                type: obj.qInfo.qType,
+                key: obj.qInfo.qId
               };
               return { children: objChilds, parent };
             }),

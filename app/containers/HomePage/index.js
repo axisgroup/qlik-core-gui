@@ -48,7 +48,7 @@ const HomePage = (props: Props) => {
         <Layout.PrimaryHeader>
           <NavBar />
         </Layout.PrimaryHeader>
-        <Layout.Sidebar />
+        {/* <Layout.Sidebar /> */}
         {content}
       </Layout>
     </div>
