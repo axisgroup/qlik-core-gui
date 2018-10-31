@@ -20,7 +20,6 @@ const GenericObjectPropEditor = componentFromStream(props$ => {
 
   return props$.pipe(
     map(({ objProps }) => {
-      console.log(objProps);
       const content = objProps
         ? displayObjLayout(objProps)
         : 'No Object Selected';

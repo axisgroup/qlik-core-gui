@@ -1,6 +1,6 @@
 // @flow
 import React from 'react';
-import { map, shareReplay, combineLatest, tap } from 'rxjs/Operators';
+import { map, shareReplay, combineLatest } from 'rxjs/Operators';
 import Tile from 'arc-design/components/tile';
 import Button from 'arc-design/components/Button';
 
@@ -120,7 +120,6 @@ const GenericObjectTable = componentFromStream(props$ => {
 
   return data$.pipe(
     combineLatest(headers$, state$),
-    tap(console.log),
     map(([data, headers, state]) => (
       <div className="genericObjTableContainer">
         <div className="header">
