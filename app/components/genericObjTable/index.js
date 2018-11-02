@@ -1,8 +1,17 @@
 // @flow
 import React from 'react';
-import { map, shareReplay, combineLatest } from 'rxjs/Operators';
+import { Subject } from 'rxjs';
+import {
+  map,
+  shareReplay,
+  combineLatest,
+  withLatestFrom,
+  debounceTime,
+  distinctUntilChanged
+} from 'rxjs/Operators';
 import Tile from 'arc-design/components/tile';
-import Button from 'arc-design/components/Button';
+import CheckBox from 'arc-design/components/checkbox';
+import SearchBox from 'arc-design/components/searchbox';
 
 import { componentFromStream } from '../../utils/observable-config';
 import distinctProp from '../../utils/distinctProp';
@@ -11,12 +20,21 @@ import './genericObjTable.css';
 const GenericObjectTable = componentFromStream(props$ => {
   // Grab the state and handlers
   const state$ = props$.pipe(
-    map(({ tableState, onToggleRow, onRowClick, onToggleExpandAll }) => ({
-      tableState,
-      onToggleRow,
-      onRowClick,
-      onToggleExpandAll
-    })),
+    map(
+      ({
+        tableState,
+        onToggleRow,
+        onRowClick,
+        onToggleExpandAll,
+        saveSearchTerm
+      }) => ({
+        tableState,
+        onToggleRow,
+        onRowClick,
+        onToggleExpandAll,
+        saveSearchTerm
+      })
+    ),
     shareReplay(1)
   );
 
@@ -31,6 +49,28 @@ const GenericObjectTable = componentFromStream(props$ => {
     distinctProp('headers'),
     shareReplay(1)
   );
+
+  // Grab the qTypes
+  // const qTypes$ = props$.pipe(
+  //   distinctProp('qTypeList'),
+  //   shareReplay(1)
+  // );
+
+  const submitSearchData = new Subject();
+
+  submitSearchData
+    .pipe(
+      debounceTime(300),
+      distinctUntilChanged(),
+      withLatestFrom(state$)
+    )
+    .subscribe(([searchTerm, { saveSearchTerm }]) =>
+      saveSearchTerm(searchTerm)
+    );
+
+  // const searchData = searchInput => {
+  //   console.log(searchInput);
+  // };
 
   const renderExpand = (node, state) => {
     let ret = '';
@@ -89,6 +129,7 @@ const GenericObjectTable = componentFromStream(props$ => {
                       role="button"
                       tabIndex={0}
                       style={{ paddingLeft: `${10 * level}px` }}
+                      className="expandButton"
                     >
                       {child.parent[header.key] ? (
                         child.parent[header.key]
@@ -120,15 +161,35 @@ const GenericObjectTable = componentFromStream(props$ => {
 
   return data$.pipe(
     combineLatest(headers$, state$),
-    map(([data, headers, state]) => (
+    map(([[data, dataAllLength, dataFilterLength], headers, state]) => (
       <div className="genericObjTableContainer">
         <div className="header">
-          <Button onClick={() => state.onToggleExpandAll()}>
-            {state.tableState.expandAll ? 'Collapse All' : 'Expand All'}
-          </Button>
+          {/* <div className="filterType">
+          </div> */}
+          <div className="searchBox">
+            <SearchBox
+              placeholder="search"
+              onSearchInput={searchInput => submitSearchData.next(searchInput)}
+            />
+          </div>
+          <div className="searchResults">
+            {state.tableState.searchTerm === ''
+              ? ''
+              : `Showing ${dataFilterLength} search results`}
+          </div>
         </div>
         <div className="tileWrapper">
-          <Tile>
+          <Tile tileTitle="OBJECT LIST">
+            <div className="checkBox">
+              <CheckBox
+                options={[{ label: 'Expand All', value: 'expand' }]}
+                onChange={expand => {
+                  // if expand all needs to be changed, change it
+                  if (state.tableState.expandAll !== expand.length > 0)
+                    state.onToggleExpandAll(expand.length > 0);
+                }}
+              />
+            </div>
             <table className="genericObjTable">
               <thead>
                 <tr className="header-row">
@@ -169,6 +230,7 @@ const GenericObjectTable = componentFromStream(props$ => {
                             }}
                             role="button"
                             tabIndex={0}
+                            className="expandButton"
                           >
                             {row.parent[header.key] ? (
                               row.parent[header.key]
@@ -194,6 +256,7 @@ const GenericObjectTable = componentFromStream(props$ => {
                 ))}
               </tbody>
             </table>
+            <div className="footer">Total {dataAllLength} objects</div>
           </Tile>
         </div>
       </div>

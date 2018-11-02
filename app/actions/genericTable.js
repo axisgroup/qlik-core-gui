@@ -2,6 +2,7 @@
 export const TOGGLE_ROW = 'TOGGLE_ROW';
 export const SELECT_OBJ = 'SELECT_OBJ';
 export const TOGGLE_EXPAND_ALL = 'TOGGLE_EXPAND_ALL';
+export const SAVE_SEARCH_TERM = 'SAVE_SEARCH_TERM';
 
 export function toggleRow(rowName: string) {
   return {
@@ -17,9 +18,16 @@ export function selectObj(obj: string) {
   };
 }
 
-export function toggleExpandAll() {
+export function toggleExpandAll(expand?: boolean) {
   return {
     type: TOGGLE_EXPAND_ALL,
-    payload: null
+    payload: typeof expand === 'boolean' ? expand : null
+  };
+}
+
+export function saveSearchTerm(term: string) {
+  return {
+    type: SAVE_SEARCH_TERM,
+    payload: term
   };
 }

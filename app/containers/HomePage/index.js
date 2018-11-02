@@ -35,12 +35,12 @@ const HomePage = (props: Props) => {
   const { setConfig, removeConfig, config } = props;
   /* eslint-enable no-unused-vars */
 
-  const content = // <QlikContent />;
-    config.host && config.appname && config.port ? (
-      <QlikContent />
-    ) : (
-      <ConfigInput onSubmit={setConfig} />
-    );
+  const content = <QlikContent />;
+  // config.host && config.appname && config.port ? (
+  //   <QlikContent />
+  // ) : (
+  //   <ConfigInput onSubmit={setConfig} />
+  // );
 
   return (
     <div className="homeView">

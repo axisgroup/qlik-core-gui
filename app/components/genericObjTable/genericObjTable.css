@@ -3,8 +3,36 @@
   width: 100%;
 }
 
-.genericObjTable .header {
+.genericObjTableContainer .header {
   height: 36px;
+}
+
+.genericObjTableContainer .tileWrapper .footer {
+  height: 36px;
+  padding: 5px;
+  margin-top: 10px;
+  font-style: italic;
+  font-weight: 300;
+  color: #46545c;
+}
+
+.genericObjTableContainer .filterType {
+  width: 25%;
+  display: inline-block;
+}
+
+.genericObjTableContainer .searchBox {
+  width: 50%;
+  display: inline-block;
+  vertical-align: top;
+}
+
+.genericObjTableContainer .searchResults {
+  width: 25%;
+  display: inline-block;
+  vertical-align: top;
+  font-size: 12px;
+  font-style: italic;
 }
 
 .genericObjTableContainer .arc-component .arc-button button {
@@ -20,7 +48,7 @@
 }
 
 .genericObjTable tr.body-row.selectedRow {
-  border: 4px solid #e69696;
+  border: 3px solid #2294f2;
 }
 
 .genericObjTable {
@@ -48,11 +76,14 @@
   background-color: white;
 }
 
-/* .genericObjTable > .header-row .header-row-cell {
-  border: 1px solid darkgray;
-  border-collapse: collapse;
-  height: 2em;
-} */
+.genericObjTable .expandButton:focus {
+  outline: 1px solid #2294f2;
+  background-color: #f5f8fa;
+}
+
+.genericObjTable .expandButton {
+  height: 100%;
+}
 
 .genericObjTable > .body {
   width: 100%;
@@ -82,6 +113,10 @@
 
 .genericObjTable > .body .body-row .body-row-cell .expandSymbol {
   width: 20px;
+}
+
+.genericObjTable > .body .body-row .body-row-cell .content {
+  width: calc(100% - 20px);
 }
 
 .genericObjTable > .body .body-row .body-row-cell .minor-name {

@@ -2,7 +2,8 @@ import genericTable from '../../app/reducers/genericTable';
 import {
   TOGGLE_ROW,
   TOGGLE_EXPAND_ALL,
-  SELECT_OBJ
+  SELECT_OBJ,
+  SAVE_SEARCH_TERM
 } from '../../app/actions/genericTable';
 
 describe('reducers', () => {
@@ -11,6 +12,7 @@ describe('reducers', () => {
       expect(genericTable(undefined, {})).toEqual({
         expandedRows: [],
         selectedObj: '',
+        searchTerm: '',
         expandAll: false
       });
     });
@@ -57,6 +59,7 @@ describe('reducers', () => {
       ).toEqual({
         expandedRows: ['test3'],
         selectedObj: '',
+        searchTerm: '',
         expandAll: false
       });
     });
@@ -111,6 +114,38 @@ describe('reducers', () => {
       });
     });
 
+    it('should handle TOGGLE_EXPAND_ALL by changing the expand all option to the given payload of false and wipe the expanded rows', () => {
+      expect(
+        genericTable(
+          { expandedRows: ['test1'], selectedObj: 'xyz', expandAll: true },
+          {
+            type: TOGGLE_EXPAND_ALL,
+            payload: false
+          }
+        )
+      ).toEqual({
+        expandedRows: [],
+        selectedObj: 'xyz',
+        expandAll: false
+      });
+    });
+
+    it('should handle TOGGLE_EXPAND_ALL by keeping the expand all option to the given payload of true and NOT wipe the expanded rows', () => {
+      expect(
+        genericTable(
+          { expandedRows: ['test1'], selectedObj: 'xyz', expandAll: true },
+          {
+            type: TOGGLE_EXPAND_ALL,
+            payload: true
+          }
+        )
+      ).toEqual({
+        expandedRows: ['test1'],
+        selectedObj: 'xyz',
+        expandAll: true
+      });
+    });
+
     it('should handle SELECT_OBJ by setting the selected object property', () => {
       expect(
         genericTable(
@@ -153,6 +188,28 @@ describe('reducers', () => {
       ).toEqual({
         expandedRows: ['test1'],
         selectedObj: ''
+      });
+    });
+
+    it('should handle SAVE_SEARCH_TERM by setting the searchTerm property to the given object types', () => {
+      expect(
+        genericTable(
+          {
+            expandedRows: [],
+            selectedObj: '',
+            searchTerm: '',
+            expandAll: false
+          },
+          {
+            type: SAVE_SEARCH_TERM,
+            payload: 'sheet'
+          }
+        )
+      ).toEqual({
+        expandedRows: [],
+        selectedObj: '',
+        searchTerm: 'sheet',
+        expandAll: false
       });
     });
   });
