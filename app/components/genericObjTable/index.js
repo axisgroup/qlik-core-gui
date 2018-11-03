@@ -12,6 +12,7 @@ import {
 import Tile from 'arc-design/components/tile';
 import CheckBox from 'arc-design/components/checkbox';
 import SearchBox from 'arc-design/components/searchbox';
+import Dropdown from '../dropDownSelector';
 
 import { componentFromStream } from '../../utils/observable-config';
 import distinctProp from '../../utils/distinctProp';
@@ -51,10 +52,10 @@ const GenericObjectTable = componentFromStream(props$ => {
   );
 
   // Grab the qTypes
-  // const qTypes$ = props$.pipe(
-  //   distinctProp('qTypeList'),
-  //   shareReplay(1)
-  // );
+  const qTypes$ = props$.pipe(
+    distinctProp('qTypeList'),
+    shareReplay(1)
+  );
 
   const submitSearchData = new Subject();
 
@@ -160,12 +161,19 @@ const GenericObjectTable = componentFromStream(props$ => {
   );
 
   return data$.pipe(
-    combineLatest(headers$, state$),
-    map(([[data, dataAllLength, dataFilterLength], headers, state]) => (
+    combineLatest(headers$, qTypes$, state$),
+    map(([[data, dataAllLength, dataFilterLength], headers, qTypes, state]) => (
       <div className="genericObjTableContainer">
         <div className="header">
-          {/* <div className="filterType">
-          </div> */}
+          <div className="filterType">
+            <Dropdown
+              title=""
+              items={qTypes.map((item, i) => ({ name: item, id: i }))}
+              layout="horizontal"
+              multiselect
+              defaultText="All qTypes"
+            />
+          </div>
           <div className="searchBox">
             <SearchBox
               placeholder="search"

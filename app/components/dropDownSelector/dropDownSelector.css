@@ -1,0 +1,80 @@
+.icon-search {
+  fill: #586f7a;
+  vertical-align: middle;
+}
+
+.icon-close {
+  fill: #586f7a;
+  vertical-align: middle;
+}
+
+.icon-checkbox-unselected {
+  fill: #586f7a;
+  vertical-align: middle;
+  cursor: pointer;
+}
+
+.arc-dropdown {
+  vertical-align: top;
+}
+.arc-dropdown .drop-container {
+  width: 100%;
+  position: relative;
+}
+.arc-dropdown .title {
+  font: 500 14px/16px Roboto;
+  color: #586f7a;
+  margin-bottom: 4px;
+}
+.arc-dropdown .drop-bar {
+  width: 100%;
+  min-height: 32px;
+  background: white;
+  text-align: left;
+  color: inherit;
+  border: 1px solid #d3dfe6;
+  padding-left: 4px;
+  font: inherit;
+  cursor: pointer;
+  outline: inherit;
+  border-radius: 2px;
+  display: flex;
+  align-items: center;
+}
+.arc-dropdown .drop-bar:hover,
+.arc-dropdown .drop-bar.open {
+  border: 1px solid #2294f2;
+}
+.arc-dropdown .drop-menu {
+  padding: 0;
+  position: absolute;
+  width: 100%;
+  margin: 0;
+}
+.arc-dropdown .drop-menu .drop-menu-list {
+  width: 100%;
+}
+.arc-dropdown .drop-menu li {
+  cursor: pointer;
+}
+.arc-dropdown .drop-menu li.selected {
+  color: steelblue;
+  font-weight: bold;
+}
+.arc-dropdown.horizontal {
+  display: flex;
+  flex: 1 1 auto;
+}
+.arc-dropdown.horizontal .title {
+  display: inline-block;
+  margin-right: 5px;
+  vertical-align: top;
+  white-space: nowrap;
+}
+.arc-dropdown.horizontal .drop-container {
+  display: inline-block;
+}
+
+.arc-tag {
+  margin-left: 4px;
+}
