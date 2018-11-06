@@ -54,7 +54,7 @@ class Dropdown extends Component {
     evt.stopPropagation();
     this.setState({
       selectedItems: []
-    }, this.props.onChange(null, this.state.selectedItems));
+    }, () => this.props.onChange(null, this.state.selectedItems));
   }
 
   render() {
