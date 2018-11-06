@@ -68,4 +68,12 @@ describe('actions', () => {
       payload: searchTerm
     });
   });
+
+  it('should create an update qType action with the given qTypes', () => {
+    const qTypes = ['test', 'table'];
+    expect(actions.updateQTypes(qTypes)).toEqual({
+      type: actions.UPDATE_QTYPES,
+      payload: qTypes
+    });
+  });
 });

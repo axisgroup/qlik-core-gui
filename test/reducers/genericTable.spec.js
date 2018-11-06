@@ -3,7 +3,8 @@ import {
   TOGGLE_ROW,
   TOGGLE_EXPAND_ALL,
   SELECT_OBJ,
-  SAVE_SEARCH_TERM
+  SAVE_SEARCH_TERM,
+  UPDATE_QTYPES
 } from '../../app/actions/genericTable';
 
 describe('reducers', () => {
@@ -13,7 +14,8 @@ describe('reducers', () => {
         expandedRows: [],
         selectedObj: '',
         searchTerm: '',
-        expandAll: false
+        expandAll: false,
+        qTypeSelections: []
       });
     });
 
@@ -60,7 +62,8 @@ describe('reducers', () => {
         expandedRows: ['test3'],
         selectedObj: '',
         searchTerm: '',
-        expandAll: false
+        expandAll: false,
+        qTypeSelections: []
       });
     });
 
@@ -210,6 +213,25 @@ describe('reducers', () => {
         selectedObj: '',
         searchTerm: 'sheet',
         expandAll: false
+      });
+    });
+
+    it('should handle UPDATE_QTYPE action by setting the qTypeSelections property to the given qTypes', () => {
+      const state = {
+        expandedRows: [],
+        selectedObj: '',
+        searchTerm: '',
+        expandAll: false,
+        qTypeSelections: []
+      };
+
+      const action = {
+        type: UPDATE_QTYPES,
+        payload: ['test', 'table']
+      };
+      expect(genericTable(state, action)).toEqual({
+        ...state,
+        qTypeSelections: ['test', 'table']
       });
     });
   });

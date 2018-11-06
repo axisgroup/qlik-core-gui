@@ -35,7 +35,8 @@ import {
   toggleRow,
   selectObj,
   toggleExpandAll,
-  saveSearchTerm
+  saveSearchTerm,
+  updateQTypes
 } from '../../actions/genericTable';
 import { setTab } from '../../actions/genericObjectDetails';
 import { componentFromStream } from '../../utils/observable-config';
@@ -68,6 +69,9 @@ const tableHandlers = withHandlers({
   },
   dispatchSaveSearchTerm: ({ dispatch }) => (searchTerm: string) => {
     dispatch(saveSearchTerm(searchTerm));
+  },
+  dispatchUpdateQtypes: ({ dispatch }) => (qTypeSelections: string[]) => {
+    dispatch(updateQTypes(qTypeSelections));
   }
 });
 
@@ -105,6 +109,12 @@ const GenericObjectView = props$ => {
   // Get the search term
   const searchTerm$ = props$.pipe(
     distinctProp('genericTable', 'searchTerm'),
+    shareReplay(1)
+  );
+
+  // Get the qType filter list
+  const qTypeFilter$ = props$.pipe(
+    distinctProp('genericTable', 'qTypeSelections'),
     shareReplay(1)
   );
 
@@ -215,14 +225,22 @@ const GenericObjectView = props$ => {
   return AppList$.pipe(
     switchMapTo(getAllQTypes$),
     switchMap((objTypeList: string[]) => getAllObjects(objTypeList)),
-    map(objParents => {
+    combineLatest(qTypeFilter$),
+    map(([objParents, qTypeFilters]) => {
+      let objParentsCopy = JSON.parse(JSON.stringify(objParents));
+      if (qTypeFilters.length > 0) {
+        objParentsCopy = objParents.filter(obj =>
+          qTypeFilters.includes(obj.parent.type)
+        );
+      }
+      // fuse search set up
       const options = {
         threshold: 0,
         keys: ['parent.title', 'parent.id', 'parent.type']
       };
-      const copyObject = JSON.parse(JSON.stringify(objParents));
+      const copyObject = objParentsCopy;
       const fuse = new Fuse(copyObject, options);
-      return [objParents, fuse, objParents.length];
+      return [objParentsCopy, fuse, objParents.length];
     }),
     combineLatest(searchTerm$),
     map(([[objParentsOrig, fuse, dataAllLength], searchTerm]) => {
@@ -282,6 +300,7 @@ const GenericObjectView = props$ => {
             onRowClick={stateObj.dispatchSelectObj}
             onToggleExpandAll={stateObj.dispatchToggleExpandAll}
             saveSearchTerm={stateObj.dispatchSaveSearchTerm}
+            updateQTypes={stateObj.dispatchUpdateQtypes}
           />
         </div>
         <div className="genericObjDetail">

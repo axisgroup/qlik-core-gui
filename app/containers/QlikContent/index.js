@@ -35,7 +35,7 @@ const QlikContent = (props: Props) => {
   // DELETE THIS LATER
   const configTemp = {
     host: 'localhost',
-    port: 9076,
+    port: 19076,
     appname: 'AUM and Flows_Scramble_ExpDeOpt.qvf'
   };
   let QaeContext;

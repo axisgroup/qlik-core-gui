@@ -3,7 +3,8 @@ import {
   TOGGLE_ROW,
   TOGGLE_EXPAND_ALL,
   SELECT_OBJ,
-  SAVE_SEARCH_TERM
+  SAVE_SEARCH_TERM,
+  UPDATE_QTYPES
 } from '../actions/genericTable';
 import type { Action, genericTableState } from './types';
 
@@ -12,7 +13,8 @@ export default function genericTable(
     expandedRows: [],
     selectedObj: '',
     expandAll: false,
-    searchTerm: ''
+    searchTerm: '',
+    qTypeSelections: []
   },
   action: Action
 ) {
@@ -52,6 +54,12 @@ export default function genericTable(
       return {
         ...state,
         searchTerm: action.payload
+      };
+
+    case UPDATE_QTYPES:
+      return {
+        ...state,
+        qTypeSelections: action.payload
       };
 
     default:

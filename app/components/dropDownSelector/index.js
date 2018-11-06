@@ -20,7 +20,6 @@ class Dropdown extends Component {
     let newSelectedItems;
     if (this.props.multiselect) {
       const currSelectedItems = this.state.selectedItems;
-      const itemIndex = currSelectedItems.indexOf(item);
       if (currSelectedItems.includes(item.id)) {
         newSelectedItems = currSelectedItems.filter(
           selected => selected !== item.id
@@ -28,14 +27,14 @@ class Dropdown extends Component {
       } else {
         newSelectedItems = [...currSelectedItems, item.id];
       }
+      item.selected = !item.selected
     } else {
       newSelectedItems = [item.id];
+      item.selected = true;
     }
     this.setState({
       selectedItems: newSelectedItems
-    });
-
-    this.props.onChange(item, newSelectedItems);
+    }, () => this.props.onChange(item, this.state.selectedItems));
   }
 
   toggleDropdown() {
@@ -48,14 +47,14 @@ class Dropdown extends Component {
     evt.stopPropagation();
     this.setState({
       selectedItems: this.state.selectedItems.filter(itemId => itemId !== id)
-    });
+    }, () => this.props.onChange(null, this.state.selectedItems));
   }
 
   removeAllSelections(evt) {
     evt.stopPropagation();
     this.setState({
       selectedItems: []
-    });
+    }, this.props.onChange(null, this.state.selectedItems));
   }
 
   render() {

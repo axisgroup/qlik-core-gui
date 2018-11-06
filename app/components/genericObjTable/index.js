@@ -27,13 +27,15 @@ const GenericObjectTable = componentFromStream(props$ => {
         onToggleRow,
         onRowClick,
         onToggleExpandAll,
-        saveSearchTerm
+        saveSearchTerm,
+        updateQTypes
       }) => ({
         tableState,
         onToggleRow,
         onRowClick,
         onToggleExpandAll,
-        saveSearchTerm
+        saveSearchTerm,
+        updateQTypes
       })
     ),
     shareReplay(1)
@@ -68,10 +70,6 @@ const GenericObjectTable = componentFromStream(props$ => {
     .subscribe(([searchTerm, { saveSearchTerm }]) =>
       saveSearchTerm(searchTerm)
     );
-
-  // const searchData = searchInput => {
-  //   console.log(searchInput);
-  // };
 
   const renderExpand = (node, state) => {
     let ret = '';
@@ -160,6 +158,14 @@ const GenericObjectTable = componentFromStream(props$ => {
     </React.Fragment>
   );
 
+  const handleUpdateQtypes = (selections, state, qTypes) => {
+    if (selections.length < 1) {
+      state.updateQTypes([]);
+    } else {
+      state.updateQTypes(qTypes.filter((type, i) => selections.includes(i)));
+    }
+  };
+
   return data$.pipe(
     combineLatest(headers$, qTypes$, state$),
     map(([[data, dataAllLength, dataFilterLength], headers, qTypes, state]) => (
@@ -172,6 +178,10 @@ const GenericObjectTable = componentFromStream(props$ => {
               layout="horizontal"
               multiselect
               defaultText="All qTypes"
+              onChange={(changeObj, selections) =>
+                handleUpdateQtypes(selections, state, qTypes)
+              }
+              selectedItem={state.selectedItem}
             />
           </div>
           <div className="searchBox">
