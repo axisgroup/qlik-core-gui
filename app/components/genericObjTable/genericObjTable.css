@@ -146,3 +146,7 @@
   border: 1px solid lightgray;
   background-color: mediumaquamarine;
 }
+
+.genericObjTableContainer .checkBox {
+  height: 40px;
+}

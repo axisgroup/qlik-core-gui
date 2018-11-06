@@ -8,17 +8,18 @@ describe('actions', () => {
     });
   });
 
-  // it('should create a set properties action', () => {
-  //   expect(actions.setProperties('{props}')).toEqual({
-  //     type: actions.SET_PROPERTIES,
-  //     payload: '{props}'
-  //   })
-  // })
-
   it('should create a set tab action with null payload if input is not valid', () => {
     expect(actions.setTab(1)).toEqual({
       type: actions.SET_TAB,
       payload: null
+    });
+  });
+
+  it('should create a save obj props action with payload', () => {
+    const props = { qType: 'test' };
+    expect(actions.saveProps(props)).toEqual({
+      type: actions.SAVE_PROPS,
+      payload: props
     });
   });
 });

@@ -1,31 +1,75 @@
 // @flow
 import React from 'react';
-import { map } from 'rxjs/Operators';
+import { map, tap } from 'rxjs/Operators';
 import ReactJson from 'react-json-view';
+import { withHandlers, compose } from 'recompose';
+import { connect } from 'react-redux';
+import Button from 'arc-design/components/button';
 import { componentFromStream } from '../../../utils/observable-config';
-
+import { saveProps } from '../../../actions/genericObjectDetails';
 import './genericObjPropEditor.css';
 
-const GenericObjectPropEditor = componentFromStream(props$ => {
+// State Management
+const mapStateToProps = state => ({
+  genericTable: state.genericTable,
+  genericObjectDetails: state.genericObjectDetails
+});
+
+const detailHandlers = withHandlers({
+  dispatchSaveProps: ({ dispatch }) => (props: {}) => {
+    dispatch(saveProps(props));
+  }
+});
+
+const GenericObjectPropEditor = props$ => {
+  // function that handles the changing of the source JSON
+  const changeSource = (obj, dispatchSaveProps) => {
+    dispatchSaveProps(obj.updated_src);
+    return true;
+  };
+
+  const saveObj = newProps => {
+    console.log(newProps);
+  };
+
   // function that returns the display of the object layout
-  const displayObjLayout = objProperties => (
-    <ReactJson
-      src={objProperties}
-      name={null}
-      onEdit={() => true}
-      onAdd={() => true}
-      onDelete={() => true}
-    />
+  const displayObjLayout = (
+    objProperties,
+    dispatchSaveProps,
+    genericObjectDetails
+  ) => (
+    <div className="objPropEditor">
+      <div className="detailHeader">
+        <Button onClick={() => saveObj(genericObjectDetails.currProps)}>
+          Save
+        </Button>
+      </div>
+      <div className="jsonEditor">
+        <ReactJson
+          src={objProperties}
+          name={null}
+          onEdit={resp => changeSource(resp, dispatchSaveProps)}
+          onAdd={resp => changeSource(resp, dispatchSaveProps)}
+          onDelete={resp => changeSource(resp, dispatchSaveProps)}
+        />
+        <div />
+      </div>
+    </div>
   );
 
   return props$.pipe(
-    map(({ objProps }) => {
+    tap(console.log),
+    map(({ objProps, dispatchSaveProps, genericObjectDetails }) => {
       const content = objProps
-        ? displayObjLayout(objProps)
+        ? displayObjLayout(objProps, dispatchSaveProps, genericObjectDetails)
         : 'No Object Selected';
       return <div className="genericObjProperties">{content}</div>;
     })
   );
-});
+};
 
-export default GenericObjectPropEditor;
+export default compose(
+  connect(mapStateToProps),
+  detailHandlers
+)(componentFromStream(GenericObjectPropEditor));
+// export default GenericObjectPropEditor;
