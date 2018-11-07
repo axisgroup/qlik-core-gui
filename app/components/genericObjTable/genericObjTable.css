@@ -3,6 +3,38 @@
   width: 100%;
 }
 
+.genericObjTableContainer .header {
+  height: 36px;
+}
+
+.genericObjTableContainer .tileWrapper .footer {
+  height: 36px;
+  padding: 5px;
+  margin-top: 10px;
+  font-style: italic;
+  font-weight: 300;
+  color: #46545c;
+}
+
+.genericObjTableContainer .filterType {
+  width: 25%;
+  display: inline-block;
+}
+
+.genericObjTableContainer .searchBox {
+  width: 50%;
+  display: inline-block;
+  vertical-align: top;
+}
+
+.genericObjTableContainer .searchResults {
+  width: 25%;
+  display: inline-block;
+  vertical-align: top;
+  font-size: 12px;
+  font-style: italic;
+}
+
 .genericObjTableContainer .arc-component .arc-button button {
   height: 36px;
 }
@@ -11,10 +43,46 @@
   width: 100%;
 }
 
-.genericObjTable > .header-row .header-row-cell {
-  border: 1px solid darkgray;
+.genericObjTable tr {
+  border: 1px solid #d3dfe6;
+}
+
+.genericObjTable tr.body-row.selectedRow {
+  border: 3px solid #2294f2;
+}
+
+.genericObjTable {
+  border-bottom: 1px solid #d3dfe6;
   border-collapse: collapse;
-  height: 2em;
+}
+
+.genericObjTable th {
+  font: 500 14px/16px Roboto;
+  color: #586f7a;
+  height: 36px;
+  background-color: #f5f8fa;
+  border-bottom: 1px solid #d3dfe6;
+  text-align: left;
+}
+
+.genericObjTable th:first-child {
+  padding-left: 25px;
+}
+
+.genericObjTable td {
+  font: 400 14px/16px Roboto;
+  color: #46545c;
+  height: 36px;
+  background-color: white;
+}
+
+.genericObjTable .expandButton:focus {
+  outline: 1px solid #2294f2;
+  background-color: #f5f8fa;
+}
+
+.genericObjTable .expandButton {
+  height: 100%;
 }
 
 .genericObjTable > .body {
@@ -32,8 +100,28 @@
   text-overflow: ellipsis;
   height: 2em;
   border-collapse: collapse;
-  border: 1px solid lightgray;
+  /* border: 1px solid lightgray; */
   cursor: pointer;
+}
+
+.genericObjTable > .body .body-row .body-row-cell .content,
+.genericObjTable > .body .body-row .body-row-cell .expandSymbol {
+  display: inline-block;
+  vertical-align: middle;
+  padding: 5px;
+}
+
+.genericObjTable > .body .body-row .body-row-cell .expandSymbol {
+  width: 20px;
+}
+
+.genericObjTable > .body .body-row .body-row-cell .content {
+  width: calc(100% - 20px);
+}
+
+.genericObjTable > .body .body-row .body-row-cell .minor-name {
+  font-weight: 300;
+  font-style: italic;
 }
 
 .genericObjTable > .body .toggleButton {
@@ -57,4 +145,8 @@
   border-collapse: collapse;
   border: 1px solid lightgray;
   background-color: mediumaquamarine;
+}
+
+.genericObjTableContainer .checkBox {
+  height: 40px;
 }

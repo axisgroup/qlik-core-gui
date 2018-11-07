@@ -19,18 +19,40 @@ const GenericObjectDetail = componentFromStream(props$ =>
         { text: 'Properties Editor', value: 'json' },
         { text: 'Layout Viewer', value: 'layout' }
       ];
+      const objPropsOnly = objProps;
+      if (objPropsOnly) delete objPropsOnly.qChildren;
       const onClick = result => {
         onSetTab(result);
       };
+      let tileTitle = '';
+      switch (detailState.activeTab) {
+        case 'overview':
+          tileTitle = 'OBJECT INSPECTOR';
+          break;
+
+        case 'layout':
+          tileTitle = 'LAYOUT VIEWER';
+          break;
+
+        case 'json':
+          tileTitle = 'PROPERTIES EDITOR';
+          break;
+
+        default:
+          tileTitle = 'ERROR';
+      }
+
       return (
         <div className="genObjDetailContainer">
-          <Toggles
-            options={options}
-            selectedValueProp={detailState.activeTab}
-            onClick={onClick}
-          />
+          <div className="toggles">
+            <Toggles
+              options={options}
+              selectedValueProp={detailState.activeTab}
+              onClick={onClick}
+            />
+          </div>
           <div className="tileWrapper">
-            <Tile>
+            <Tile tileTitle={tileTitle}>
               {detailState.activeTab === 'overview' ? (
                 <GenericObjectProperties objProps={objProps} />
               ) : null}
@@ -40,7 +62,7 @@ const GenericObjectDetail = componentFromStream(props$ =>
               ) : null}
 
               {detailState.activeTab === 'json' ? (
-                <GenericObjectPropEditor objProps={objProps} />
+                <GenericObjectPropEditor objProps={objPropsOnly} />
               ) : null}
             </Tile>
           </div>

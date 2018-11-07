@@ -1,14 +1,32 @@
-// import connectQlik from 'arc-design/data-providers/qlik/connectQlik';
+// // @flow
+// import React from 'react';
+// import { bindActionCreators } from 'redux';
+// import { connect } from 'react-redux';
+// import connectQlik from 'react-qae';
 
-// const config = {
-//     host: 'localhost',
-//     // host: '172.18.0.2',
-//     port: 19076,
-//     appname: 'AUM and Flows_Scramble_ExpDeOpt.qvf'
+// import type { Config } from '../reducers/types';
+
+// type Props = {
+//   config: Config
+// };
+
+// function mapStateToProps(state) {
+//   return {
+//     config: state.config
+//   };
 // }
 
-// const QaeContext = connectQlik(config);
+// const QaeContext = null;
 
-// console.log(QaeContext);
+// const createQlikContext = (props: Props) => {
+//   /* eslint-disable no-unused-vars */
+//   const { config } = props;
+//   /* eslint-enable no-unused-vars */
 
-// export default QaeContext;
+//   if (config.host && config.appname && config.port) {
+//     QaeContext = connectQlik(config);
+//   }
+// };
+
+// export {QaeContext};
+// export {createQlikContext};

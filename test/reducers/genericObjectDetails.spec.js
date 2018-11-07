@@ -1,5 +1,5 @@
 import genericObjectDetails from '../../app/reducers/genericObjectDetails';
-import { SET_TAB } from '../../app/actions/genericObjectDetails';
+import { SET_TAB, SAVE_PROPS } from '../../app/actions/genericObjectDetails';
 
 describe('reducers', () => {
   describe('genericObjectDetails', () => {
@@ -34,6 +34,25 @@ describe('reducers', () => {
       const expectedState = {
         activeTab: 'overview'
       };
+      expect(genericObjectDetails(initialState, action)).toEqual(expectedState);
+    });
+
+    it('should set the current save props', () => {
+      const initialState = {
+        activeTab: 'something',
+        currProps: {}
+      };
+
+      const action = {
+        type: SAVE_PROPS,
+        payload: { qType: 'test' }
+      };
+
+      const expectedState = {
+        activeTab: 'something',
+        currProps: { qType: 'test' }
+      };
+
       expect(genericObjectDetails(initialState, action)).toEqual(expectedState);
     });
   });

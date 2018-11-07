@@ -1,3 +1,4 @@
+/* eslint-disable import/extensions */
 // @flow
 import React from 'react';
 import { withHandlers, compose } from 'recompose';
@@ -28,13 +29,16 @@ import {
   GetFullPropertyTree,
   GetChildInfos
 } from 'rxq/GenericObject';
+import Fuse from 'fuse.js';
+
 import {
   toggleRow,
   selectObj,
-  toggleExpandAll
+  toggleExpandAll,
+  saveSearchTerm,
+  updateQTypes
 } from '../../actions/genericTable';
 import { setTab } from '../../actions/genericObjectDetails';
-
 import { componentFromStream } from '../../utils/observable-config';
 import distinctProp from '../../utils/distinctProp';
 import GenericObjectTable from '../genericObjTable';
@@ -43,9 +47,8 @@ import './genericObjView.css';
 
 // the Generic Objects table needs headers
 const headerKeys = [
-  { key: 'title', title: 'Name' },
-  { key: 'type', title: 'Type' },
-  { key: 'id', title: 'qId' }
+  { key: 'name', title: 'Name/qID' },
+  { key: 'type', title: 'qType' }
 ];
 
 // State Management
@@ -61,8 +64,14 @@ const tableHandlers = withHandlers({
   dispatchSelectObj: ({ dispatch }) => (obj: string) => {
     dispatch(selectObj(obj));
   },
-  dispatchToggleExpandAll: ({ dispatch }) => () => {
-    dispatch(toggleExpandAll());
+  dispatchToggleExpandAll: ({ dispatch }) => (expand: boolean) => {
+    dispatch(toggleExpandAll(expand));
+  },
+  dispatchSaveSearchTerm: ({ dispatch }) => (searchTerm: string) => {
+    dispatch(saveSearchTerm(searchTerm));
+  },
+  dispatchUpdateQtypes: ({ dispatch }) => (qTypeSelections: string[]) => {
+    dispatch(updateQTypes(qTypeSelections));
   }
 });
 
@@ -96,6 +105,18 @@ const GenericObjectView = props$ => {
 
   // Get the state and the handlers
   const state$ = props$.pipe(shareReplay(1));
+
+  // Get the search term
+  const searchTerm$ = props$.pipe(
+    distinctProp('genericTable', 'searchTerm'),
+    shareReplay(1)
+  );
+
+  // Get the qType filter list
+  const qTypeFilter$ = props$.pipe(
+    distinctProp('genericTable', 'qTypeSelections'),
+    shareReplay(1)
+  );
 
   // Partition based on qId state
   const [withQID$, noQID$] = docQID$.pipe(
@@ -183,7 +204,8 @@ const GenericObjectView = props$ => {
                     ? obj.qMeta.title
                     : obj.qData.title,
                 id: obj.qInfo.qId,
-                type: obj.qInfo.qType
+                type: obj.qInfo.qType,
+                key: obj.qInfo.qId
               };
               return { children: objChilds, parent };
             }),
@@ -203,7 +225,33 @@ const GenericObjectView = props$ => {
   return AppList$.pipe(
     switchMapTo(getAllQTypes$),
     switchMap((objTypeList: string[]) => getAllObjects(objTypeList)),
-    map(objParents => {
+    combineLatest(qTypeFilter$),
+    map(([objParents, qTypeFilters]) => {
+      let objParentsCopy = JSON.parse(JSON.stringify(objParents));
+      if (qTypeFilters.length > 0) {
+        objParentsCopy = objParents.filter(obj =>
+          qTypeFilters.includes(obj.parent.type)
+        );
+      }
+      // fuse search set up
+      const options = {
+        threshold: 0,
+        keys: ['parent.title', 'parent.id', 'parent.type']
+      };
+      const copyObject = objParentsCopy;
+      const fuse = new Fuse(copyObject, options);
+      return [objParentsCopy, fuse, objParents.length];
+    }),
+    combineLatest(searchTerm$),
+    map(([[objParentsOrig, fuse, dataAllLength], searchTerm]) => {
+      let objParents;
+      if (searchTerm !== '') {
+        const searchRes = fuse.search(searchTerm);
+        objParents = JSON.parse(JSON.stringify(searchRes));
+      } else {
+        objParents = JSON.parse(JSON.stringify(objParentsOrig));
+      }
+      const dataFilterLength = objParents.length;
       // map the data sources into a heirarchial structure
       // Step 1 - get all the objects that are children
       const childrenObjs = objParents
@@ -217,37 +265,44 @@ const GenericObjectView = props$ => {
       // Step 3 - assign all children to their parents
       const findChildren = parent => {
         if (parent.children.length > 0) {
+          const childArray = [];
           for (let i = 0; i < parent.children.length; i += 1) {
             const foundChild = objParents.filter(
               obj => obj.parent.id === parent.children[i].qId
             );
-            /* eslint-disable no-param-reassign */
-            parent.children[i] = foundChild[0];
-            /* eslint-enable no-param-reassign */
-            findChildren(parent.children[i]);
+            if (foundChild.length > 0) {
+              childArray.push(foundChild[0]);
+              findChildren(foundChild[0]);
+            }
           }
+          /* eslint-disable no-param-reassign */
+          parent.children = childArray;
+          /* eslint-enable no-param-reassign */
         }
       };
       for (let i = 0; i < lvl1Parents.length; i += 1) {
         findChildren(lvl1Parents[i]);
       }
-      return lvl1Parents;
+      return [lvl1Parents, dataAllLength, dataFilterLength];
     }),
-    combineLatest(state$, selObjProps$, selObjLayout$),
+    combineLatest(state$, selObjProps$, selObjLayout$, getAllQTypes$),
     debounceTime(100),
-    map(([result, stateObj, objProps, objLayout]) => (
+    map(([result, stateObj, objProps, objLayout, qTypeList]) => (
+      // map(([[result, stateObj], objProps, objLayout, qTypeList]) => (
       <div className="genericObjView">
         <div className="genericObjTable">
           <GenericObjectTable
             data={result}
+            qTypeList={qTypeList}
             headers={headerKeys}
             tableState={stateObj.genericTable}
             onToggleRow={stateObj.dispatchToggleRow}
             onRowClick={stateObj.dispatchSelectObj}
             onToggleExpandAll={stateObj.dispatchToggleExpandAll}
+            saveSearchTerm={stateObj.dispatchSaveSearchTerm}
+            updateQTypes={stateObj.dispatchUpdateQtypes}
           />
         </div>
-        <div className="viewSpacer" />
         <div className="genericObjDetail">
           <GenericObjectDetail
             objProps={objProps}

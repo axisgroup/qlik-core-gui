@@ -16,7 +16,9 @@ export type Config = {
 export type genericTableState = {
   expandedRows: string[],
   selectedObj: string,
-  expandAll?: boolean
+  searchTerm: string,
+  expandAll?: boolean,
+  qTypeSelections: string[]
 };
 
 export type genericObjectDetailState = {

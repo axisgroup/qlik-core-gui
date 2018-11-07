@@ -14,4 +14,12 @@ describe('actions', () => {
       payload: null
     });
   });
+
+  it('should create a save obj props action with payload', () => {
+    const props = { qType: 'test' };
+    expect(actions.saveProps(props)).toEqual({
+      type: actions.SAVE_PROPS,
+      payload: props
+    });
+  });
 });

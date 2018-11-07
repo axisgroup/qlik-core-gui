@@ -1,5 +1,5 @@
 // @flow
-import { SET_TAB } from '../actions/genericObjectDetails';
+import { SET_TAB, SAVE_PROPS } from '../actions/genericObjectDetails';
 import type { Action, genericObjectDetailState } from './types';
 
 export default function genericObjectDetails(
@@ -14,6 +14,13 @@ export default function genericObjectDetails(
       return {
         ...state,
         activeTab: newTab
+      };
+    }
+
+    case SAVE_PROPS: {
+      return {
+        ...state,
+        currProps: JSON.parse(JSON.stringify(action.payload))
       };
     }
 

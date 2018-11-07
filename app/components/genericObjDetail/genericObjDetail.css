@@ -2,12 +2,16 @@
   height: 100%;
 }
 
-.genObjDetailContainer .tileWrapper {
-  height: 100%;
-  width: 100%;
-  margin-top: 20px;
-}
-
 .genObjDetailContainer .arc-toggles button {
   vertical-align: top;
+  width: 120px;
+}
+
+.genObjDetailContainer .arc-component {
+  float: right;
+}
+
+.genObjDetailContainer .toggles {
+  height: 36px;
+  width: 100%;
 }
