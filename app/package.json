@@ -1,7 +1,7 @@
 {
   "name": "qlik-core-gui",
   "productName": "Qlik Core GUI",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "GUI tools for qlik core development",
   "main": "./main.prod.js",
   "author": {
